@@ -24,7 +24,7 @@ def _check_keywords(parsed: ParsedResponse) -> ValidationResult:
     combined = f"{parsed.type} {parsed.msg}"
 
     if not has_bad_keywords(combined):
-        return ValidationResult(is_valid=True)
+        return ValidationResult(is_valid=True, kind=parsed.type, msg=parsed.msg)
 
     triggered = get_triggered_keyword(combined)
     return ValidationResult(

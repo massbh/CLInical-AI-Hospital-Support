@@ -10,9 +10,8 @@ export interface Note {
 
 export interface Suggestion {
   id: string;
-  title: string;
-  description: string;
-  priority: "high" | "medium" | "low";
+  content: string;
+  source: string;
   timestamp: Date;
   isNew?: boolean;
 }
@@ -26,8 +25,7 @@ export interface NoteCardProps {
 
 export interface SuggestionCardProps {
   id: string;
-  title: string;
-  description: string;
+  content: string;
   timestamp: Date;
   isNew?: boolean;
 }

@@ -7,7 +7,6 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 
 CREATE TYPE account_type AS ENUM ('patient', 'doctor', 'nurse');
-CREATE TYPE suggestion_priority AS ENUM ('high', 'medium', 'low');
 CREATE TYPE section_status AS ENUM ('pending', 'accepted');
 
 
@@ -78,15 +77,13 @@ CREATE INDEX idx_notes_appointment ON notes(appointment_id);
 
 CREATE TABLE suggestions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    title VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL,
-    priority suggestion_priority NOT NULL,
+    content TEXT NOT NULL,
+    source VARCHAR(255),
     timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     is_new BOOLEAN DEFAULT TRUE,
     appointment_id UUID NOT NULL REFERENCES booked_appointments(id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_suggestions_priority ON suggestions(priority);
 CREATE INDEX idx_suggestions_timestamp ON suggestions(timestamp DESC);
 CREATE INDEX idx_suggestions_appointment ON suggestions(appointment_id);
 
@@ -201,9 +198,9 @@ INSERT INTO booked_appointments (id, doctor_id, patient_id, date, time) VALUES
      'aaaa0000-0000-0000-0000-000000000004'::UUID,  
      CURRENT_DATE, '10:00 am'),  
     ('cccc0000-0000-0000-0000-000000000003'::UUID,  
-     'bbbb0000-0000-0000-0000-000000000002'::UUID,  
+     'bbbb0000-0000-0000-0000-000000000001'::UUID,  
      'aaaa0000-0000-0000-0000-000000000003'::UUID,  
-     CURRENT_DATE, '10:00 am'),  
+     CURRENT_DATE, '3:00 pm'),  
     ('cccc0000-0000-0000-0000-000000000004'::UUID,  
      'bbbb0000-0000-0000-0000-000000000001'::UUID,  
      'aaaa0000-0000-0000-0000-000000000003'::UUID,  
@@ -222,27 +219,23 @@ INSERT INTO notes (content, source, is_new, appointment_id) VALUES
     ('Patient has family history of hypertension (mother, maternal grandmother).',  
      'Medical Records', TRUE, 'cccc0000-0000-0000-0000-000000000001'::UUID);  
   
--- Suggestions (tied to today's 9:00 am appointment for Dr. Sarah Johnson)  
-INSERT INTO suggestions (title, description, priority, appointment_id) VALUES  
-    ('Order blood panel',  
-     'Recurring headaches with elevated BP may indicate underlying condition — recommend CBC and metabolic panel.',  
-     'high', 'cccc0000-0000-0000-0000-000000000001'::UUID),  
-    ('Discuss lifestyle factors',  
-     'Ask about sleep patterns, stress levels, and caffeine intake given the headache history.',  
-     'medium', 'cccc0000-0000-0000-0000-000000000001'::UUID),  
-    ('Schedule follow-up',  
-     'If BP remains elevated, schedule a follow-up in 2 weeks for repeat measurement.',  
-     'low', 'cccc0000-0000-0000-0000-000000000001'::UUID);  
+-- Suggestions (tied to today's 9:00 am appointment for Dr. Sarah Johnson)
+INSERT INTO suggestions (content, source, is_new, appointment_id) VALUES
+    ('Order blood panel — recurring headaches with elevated BP may indicate underlying condition; recommend CBC and metabolic panel.',
+     'medBrain', TRUE, 'cccc0000-0000-0000-0000-000000000001'::UUID),
+    ('Discuss lifestyle factors — ask about sleep patterns, stress levels, and caffeine intake given the headache history.',
+     'medBrain', TRUE, 'cccc0000-0000-0000-0000-000000000001'::UUID),
+    ('Schedule follow-up — if BP remains elevated, schedule a follow-up in 2 weeks for repeat measurement.',
+     'medBrain', TRUE, 'cccc0000-0000-0000-0000-000000000001'::UUID);
   
 -- Notes for the 10:00 am appointment (different patient)  
 INSERT INTO notes (content, source, is_new, appointment_id) VALUES  
     ('Patient here for routine follow-up after knee surgery 6 weeks ago.',  
      'AI Analysis', TRUE, 'cccc0000-0000-0000-0000-000000000002'::UUID);  
   
-INSERT INTO suggestions (title, description, priority, appointment_id) VALUES  
-    ('Review post-op imaging',  
-     'Check latest X-ray to confirm proper healing of the tibial plateau.',  
-     'high', 'cccc0000-0000-0000-0000-000000000002'::UUID);  
+INSERT INTO suggestions (content, source, is_new, appointment_id) VALUES
+    ('Review post-op imaging — check latest X-ray to confirm proper healing of the tibial plateau.',
+     'medBrain', TRUE, 'cccc0000-0000-0000-0000-000000000002'::UUID);
   
 -- Reports  
 INSERT INTO reports (id, patient_id, doctor_id, patient_name, patient_surname, doctor_name, date, title, content, preview) VALUES  

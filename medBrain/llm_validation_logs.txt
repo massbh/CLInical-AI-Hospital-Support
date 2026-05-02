@@ -1,0 +1,21 @@
+2026-05-02 16:17:09 | Attempt: 1 | Valid: True | Error: None | Msg: The patient's history of myocardial infarction raises concern for recurrent AMI, which should be considered in the differential diagnosis along with other causes of chest pain such as angina.
+2026-05-02 16:17:27 | Attempt: 1 | Valid: True | Error: None | Msg: The patient's presentation suggests acute coronary syndrome (ACS), which requires immediate attention. The absence of chest pain in the patient's history and the presence of other cardiovascular risk factors raise suspicion for this diagnosis.
+2026-05-02 16:17:48 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports chest pain for 2 days, no recent MI history. Ask about the nature of the pain and any associated symptoms (like shortness of breath).
+2026-05-02 16:18:43 | Attempt: 1 | Valid: True | Error: None | Msg: The patient is complaining of chest pain and shortness of breath, which are both symptoms of acute coronary syndrome. These are red flags for severe cardiac disease. ECG and troponin levels should be reviewed urgently to confirm the diagnosis.
+2026-05-02 16:19:01 | Attempt: 1 | Valid: True | Error: None | Msg: The patient's cough persisting longer than two weeks, with
+associated fever and shortness of breath, raises concerns about TB.
+2026-05-02 16:19:23 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-02 16:19:25 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-02 16:19:26 | Attempt: 3 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-02 16:20:10 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-02 16:20:13 | Attempt: 2 | Valid: True | Error: None | Msg: However, given her history of peptic ulcer disease, she should be advised to avoid nonsteroidal anti-inflammatory drugs (NSAIDs) and use alternative analgesics as needed.
+2026-05-02 16:23:51 | Attempt: 1 | Valid: True | Error: None | Msg: The patient presented with persistent cough, fever, chills,
+and myalgias for two weeks. A chest X-ray revealed a right middle lobe
+pneumonia.
+2026-05-02 16:24:08 | Attempt: 1 | Valid: True | Error: None | Msg: The patient reports a sharp, central headache. This could be indicative of a brain aneurysm. Further investigation is warranted.
+2026-05-02 16:24:27 | Attempt: 1 | Valid: True | Error: None | Msg: The patient reports a new-onset headache with a sudden onset, severe quality, and one-sided location. This could be indicative of a brain hemorrhage. An immediate CT scan is warranted to confirm this diagnosis.
+2026-05-02 16:24:45 | Attempt: 1 | Valid: True | Error: None | Msg: Chest pain, shortness of breath, and fatigue may indicate a cardiac event. Examine the patient's airway, breathing, and circulation. Consider ordering an ECG.
+2026-05-02 16:25:04 | Attempt: 1 | Valid: True | Error: None | Msg: This patient's presentation raises immediate concerns for an acute coronary syndrome. An ECG should be obtained, and troponin levels reviewed as soon as possible to confirm the diagnosis and guide management.
+2026-05-02 16:29:38 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-02 16:29:44 | Attempt: 2 | Valid: True | Error: None | Msg: The patient's age, sex, and medical history suggest potential red flags for a more severe condition. She should be further evaluated with imaging studies to rule out life-threatening causes of headache, such as stroke or meningitis. If her symptoms are confirmed as migraine, lifestyle modifications and potentially preventative medication may be recommended.
+2026-05-02 16:31:22 | Attempt: 1 | Valid: True | Error: None | Msg: Consider reviewing the patient's current medication list and looking for potential drug interactions, including the potential for an overdose from a recent acute event. Order an ECG if the patient has chest pain or shortness of breath to assess cardiac ischemia.

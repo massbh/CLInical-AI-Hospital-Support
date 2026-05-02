@@ -1,14 +1,11 @@
-import { Lightbulb, ArrowRight } from "lucide-react";
+import { Lightbulb } from "lucide-react";
 import type { SuggestionCardProps } from "@/types";
 
 export default function SuggestionCard({
-  title,
-  description,
+  content,
   timestamp,
-  isNew
+  isNew,
 }: SuggestionCardProps) {
-
-
   return (
     <article className="group relative rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
       {isNew && (
@@ -16,29 +13,18 @@ export default function SuggestionCard({
       )}
 
       <div className="flex items-start gap-3">
-        <div className="mt-1 p-2 bg-[#FFF4E6] rounded-lg">
-          <Lightbulb className="w-4 h-4 text-[#FFB84D]" />
+        <div className="mt-1 rounded-lg bg-[#FFF4E6] p-2">
+          <Lightbulb className="h-4 w-4 text-[#FFB84D]" />
         </div>
 
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-medium text-foreground">{title}</h3>
-          </div>
-
-          <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-            {description}
-          </p>
+          <p className="text-foreground leading-relaxed">{content}</p>
 
           <div className="mt-3 flex items-center gap-3 text-sm text-muted-foreground">
             <span className="text-border">•</span>
             <time className="text-xs text-muted-foreground">
               {formatTime(timestamp)}
             </time>
-
-          <button className="flex items-center gap-1 text-sm text-[#167980] opacity-0 transition-opacity group-hover:opacity-100">
-              <span>Review</span>
-              <ArrowRight className="w-3 h-3" />
-            </button>
           </div>
         </div>
       </div>

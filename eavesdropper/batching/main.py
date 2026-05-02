@@ -92,3 +92,11 @@ def get_next_batch():
     update_state_if_needed(batch_units, state, end)
 
     return format_batch(batch_units)
+
+
+@app.post("/reset")
+def reset_state():
+    """Reset the batching cursor so the next /next-batch starts at index 0.
+    Called by tradLlm when a new appointment session starts."""
+    save_state({"last_index": 0})
+    return {"ok": True, "last_index": 0}

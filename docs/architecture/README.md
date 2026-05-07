@@ -239,6 +239,7 @@ flowchart TD
 
 - **Requester:** Handles the actuall part by part prompting of Med Brain to ensure correct flow. passes the Notes to the system and
 - **PDF generator:** Has two modes preview without generating an actuall pdf just forwards the information to Report preview; and production generating the actuall report based on the edited/accepted preview report.
+To test it run insert_test_data.py
 
 #### 2.3.1.1 Requester
 

@@ -6,8 +6,11 @@ from datetime import datetime
 import httpx
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Table, TableStyle
 from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from reportlab.lib import colors
 
 from app.config import config
 
@@ -115,37 +118,167 @@ def update_report_preview_flag_db(report_id: str, preview_value) -> bool:
         raise
 
 
-def add_part(merged_file: str, rml_string: str) -> str:
-    """Add a new part to the merged file content."""
+def loop_reports(report_id: str) -> dict:
+    """
+    Fetch and organize report sections by type.
+    
+    Returns dict with keys: assessment, diagnosis, prescription
+    """
+    sections_data = {
+        "assessment": None,
+        "diagnosis": None,
+        "prescription": None,
+        "other": []
+    }
+    
     try:
-        merged_file += rml_string
-        return merged_file
+        sections = fetch_report_sections(report_id)
+        
+        for section in sections:
+            title_lower = section.get('title', '').lower().strip()
+            content = section.get('content', '')
+            
+            if 'assess' in title_lower or 'symptom' in title_lower:
+                sections_data["assessment"] = {
+                    "title": section.get('title'),
+                    "content": content
+                }
+            elif 'diagnos' in title_lower:
+                sections_data["diagnosis"] = {
+                    "title": section.get('title'),
+                    "content": content
+                }
+            elif 'prescri' in title_lower or 'recommendation' in title_lower:
+                sections_data["prescription"] = {
+                    "title": section.get('title'),
+                    "content": content
+                }
+            else:
+                # Store other sections
+                sections_data["other"].append({
+                    "title": section.get('title'),
+                    "content": content
+                })
+        
+        logger.info(f"Organized sections for report {report_id}: "
+                   f"assessment={sections_data['assessment'] is not None}, "
+                   f"diagnosis={sections_data['diagnosis'] is not None}, "
+                   f"prescription={sections_data['prescription'] is not None}")
+        
+        return sections_data
+        
     except Exception as e:
-        logger.error(f"Error adding part to merged file: {e}")
-        raise
+        logger.error(f"Error organizing sections for report {report_id}: {e}")
+        return sections_data
 
 
-def loop_reports(report_id: str) -> str:
-    """Fetch and merge report sections."""
-    merged_file = ""
-    sections = fetch_report_sections(report_id)
+def generate_formatted_pdf(sections_data: dict, report_data: dict, output_file: str) -> bool:
+    """
+    Generate a structured PDF with Assessment → Diagnosis → Prescription sections.
     
-    for section in sections[:3]:
-        if section.get('content'):
-            merged_file = add_part(merged_file, section['content'])
-    
-    return merged_file
-
-
-def generate_formatted_pdf(merged_file: str, output_file: str) -> bool:
-    """Generate a PDF from merged file content."""
+    Args:
+        sections_data: Dict with keys assessment, diagnosis, prescription
+        report_data: Report metadata (patient name, doctor, date, etc.)
+        output_file: Path to output PDF
+    """
     try:
-        doc = SimpleDocTemplate(output_file, pagesize=letter)
-        doc.build([Paragraph(merged_file)])
-        logger.info(f"PDF generated successfully: {output_file}")
+        doc = SimpleDocTemplate(output_file, pagesize=letter, topMargin=0.75*inch, bottomMargin=0.75*inch)
+        story = []
+        
+        # Define styles
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=16,
+            textColor=colors.HexColor('#1a1a1a'),
+            spaceAfter=6,
+            fontName='Helvetica-Bold'
+        )
+        heading_style = ParagraphStyle(
+            'SectionHeading',
+            parent=styles['Heading2'],
+            fontSize=12,
+            textColor=colors.HexColor('#2c3e50'),
+            spaceAfter=12,
+            spaceBefore=12,
+            fontName='Helvetica-Bold',
+            borderPadding=6,
+            borderColor=colors.HexColor('#3498db'),
+            borderWidth=2,
+            borderRadius=3
+        )
+        body_style = ParagraphStyle(
+            'CustomBody',
+            parent=styles['BodyText'],
+            fontSize=10,
+            leading=14,
+            spaceAfter=12,
+            alignment=4  # justify
+        )
+        
+        # Report header
+        patient_name = f"{report_data.get('patient_name', '')} {report_data.get('patient_surname', '')}"
+        doctor_name = report_data.get('doctor_name', 'Unknown Doctor')
+        report_date = report_data.get('date', 'N/A')
+        report_title = report_data.get('title', 'Medical Report')
+        
+        story.append(Paragraph(report_title, title_style))
+        story.append(Spacer(1, 0.1*inch))
+        
+        # Patient and doctor info
+        info_data = [
+            ['Patient:', patient_name],
+            ['Doctor:', doctor_name],
+            ['Date:', str(report_date)]
+        ]
+        info_table = Table(info_data, colWidths=[1.5*inch, 4*inch])
+        info_table.setStyle(TableStyle([
+            ('FONT', (0, 0), (0, -1), 'Helvetica-Bold', 10),
+            ('FONT', (1, 0), (1, -1), 'Helvetica', 10),
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+        ]))
+        story.append(info_table)
+        story.append(Spacer(1, 0.2*inch))
+        
+        # 1. Assessment Section (First)
+        if sections_data.get('assessment'):
+            story.append(Paragraph("1. Assessment", heading_style))
+            assessment_content = sections_data['assessment'].get('content', '')
+            story.append(Paragraph(assessment_content, body_style))
+            story.append(Spacer(1, 0.1*inch))
+        
+        # 2. Diagnosis Section (Second)
+        if sections_data.get('diagnosis'):
+            story.append(Paragraph("2. Diagnosis", heading_style))
+            diagnosis_content = sections_data['diagnosis'].get('content', '')
+            story.append(Paragraph(diagnosis_content, body_style))
+            story.append(Spacer(1, 0.1*inch))
+        
+        # 3. Prescription Section (Last)
+        if sections_data.get('prescription'):
+            story.append(Paragraph("3. Prescription & Recommendations", heading_style))
+            prescription_content = sections_data['prescription'].get('content', '')
+            story.append(Paragraph(prescription_content, body_style))
+            story.append(Spacer(1, 0.1*inch))
+        
+        # 4. Other sections (if any)
+        if sections_data.get('other'):
+            for idx, section in enumerate(sections_data['other'], 4):
+                section_title = section.get('title', f'Section {idx}')
+                section_content = section.get('content', '')
+                story.append(Paragraph(f"{idx}. {section_title}", heading_style))
+                story.append(Paragraph(section_content, body_style))
+                story.append(Spacer(1, 0.1*inch))
+        
+        # Build PDF
+        doc.build(story)
+        logger.info(f"Structured PDF generated successfully: {output_file}")
         return True
+        
     except Exception as e:
-        logger.error(f"Error generating PDF: {e}")
+        logger.error(f"Error generating structured PDF: {e}", exc_info=True)
         raise
 
 
@@ -249,14 +382,14 @@ def process_report(report_id: str, output_dir: str) -> bool:
             logger.info(f"Processing report {report_id} in PRODUCTION mode")
             
             try:
-                # Fetch and merge sections
-                merged_content = loop_reports(report_id)
+                # Fetch and organize sections
+                sections_data = loop_reports(report_id)
                 
-                # Generate PDF
+                # Generate structured PDF
                 pdf_path = f"{output_dir}report_{report_id}.pdf"
-                generate_formatted_pdf(merged_content, pdf_path)
+                generate_formatted_pdf(sections_data, report, pdf_path)
                 
-                # Update flag to false (already sent)
+                # Update flag to false (already processed)
                 update_report_preview_flag_db(report_id, False)
                 logger.info(f"Report {report_id} marked as processed and PDF generated")
                 

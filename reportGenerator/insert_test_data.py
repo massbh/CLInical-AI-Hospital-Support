@@ -19,7 +19,13 @@ try:
         "SELECT COUNT(*) as count FROM reports WHERE id = 'cccc0000-0000-0000-0000-000000000001'"
     )
     if cursor.fetchone()['count'] > 0:
-        print("✓ Test data already exists, skipping insertion")
+        print("✓ Test data already exists")
+        # Reset preview flag to TRUE for testing
+        cursor.execute(
+            "UPDATE reports SET preview = TRUE WHERE id = 'cccc0000-0000-0000-0000-000000000001'"
+        )
+        conn.commit()
+        print("✓ Preview flag reset to TRUE for PDF generation testing")
     else:
         cursor.execute(
             "SELECT id FROM accounts WHERE email = 'patient@test.com' LIMIT 1"

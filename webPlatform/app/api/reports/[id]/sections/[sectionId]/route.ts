@@ -1,9 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";  
-import pool from "@/lib/db";  
-  
-// fetch report section content
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string; sectionId: string }>}) {  
-  const { id, sectionId } = await params;  
+import { NextRequest, NextResponse } from "next/server";
+import pool from "@/lib/db";
+import { requireDoctor } from "@/lib/db-auth";
+
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string; sectionId: string }>}) {
+    const authResult = await requireDoctor(request);
+    if (authResult instanceof NextResponse) return authResult;
+
+    const { id, sectionId } = await params;
   
   try {  
     const result = await pool.query(  
@@ -25,10 +28,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 }  
   
 // update report section status and/or content
-export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string; sectionId: string }> }) {  
-  const { id, sectionId } = await params;  
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string; sectionId: string }> }) {
+    const authResult = await requireDoctor(request);
+    if (authResult instanceof NextResponse) return authResult;
 
-  const body = await request.json();  
+    const { id, sectionId } = await params;
+
+    const body = await request.json();
   const { status, content } = body;  
   
   try {  

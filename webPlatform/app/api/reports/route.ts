@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
+import { requireDoctor } from "@/lib/db-auth";
 
-// gets all reports for the dashboard
-export async function GET() {
+export async function GET(_request: NextRequest) {
+    const authResult = await requireDoctor(_request);
+    if (authResult instanceof NextResponse) return authResult;
     try {
         const results = await pool.query(
             `SELECT id,

@@ -1,9 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";  
-import pool from "@/lib/db";  
+import { NextRequest, NextResponse } from "next/server";
+import pool from "@/lib/db";
+import { requireDoctor } from "@/lib/db-auth";
 
-// fetch report section lists (summaries, no content)
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }>}) {  
-  const { id } = await params;  
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }>}) {
+    const authResult = await requireDoctor(request);
+    if (authResult instanceof NextResponse) return authResult;
+
+    const { id } = await params;
   
   try {  
     const result = await pool.query(  

@@ -1,8 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";  
-import pool from "@/lib/db"; 
+import { NextRequest, NextResponse } from "next/server";
+import pool from "@/lib/db";
+import { requireDoctor } from "@/lib/db-auth";
 
-// fetch report meta data
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }>}) {
+    const authResult = await requireDoctor(request);
+    if (authResult instanceof NextResponse) return authResult;
+
     const { id } = await params;
 
     try {

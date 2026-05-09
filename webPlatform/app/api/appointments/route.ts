@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
-import { cookies } from "next/headers";
+import { requirePatient } from "@/lib/db-auth";
 
 
 // returns booked appointments (for the calender/booking UI)
@@ -39,13 +39,9 @@ export async function GET(request: NextRequest) {
 
 // book a new appointment
 export async function POST(request: NextRequest) {
-    // get logged in user's id
-    const cookieStore = await cookies();
-    const patientId = cookieStore.get("userId")?.value;
-
-    if (!patientId) {
-        return  NextResponse.json({ error: "Not logged in" }, { status: 401 });  
-    }
+    const authResult = await requirePatient(request);
+    if (authResult instanceof NextResponse) return authResult;
+    const patientId = authResult.user.id;
     
     // validate body
     const body = await request.json();

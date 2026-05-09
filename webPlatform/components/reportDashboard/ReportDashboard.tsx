@@ -4,27 +4,29 @@ import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import ReportRow from "./ReportRow";
 import { ReportListItem } from "@/types";
+import { getAuthHeaders } from "@/lib/client-auth";
 
 const REPORT_DISPLAY_LIMIT = 100;
 
 export default function ReportDashboard() {
-  const [reports, setReports] = useState<ReportListItem[]>([]); 
+  const [reports, setReports] = useState<ReportListItem[]>([]);
   const [query, setQuery] = useState("");
   const normalizedQuery = query.trim().toLowerCase();
 
-  // fetch reports from database
   useEffect(() => {
     async function loadReports() {
       try {
-        const response = await fetch("/api/reports");
+        const response = await fetch("/api/reports", {
+          headers: getAuthHeaders(),
+        });
         const data: ReportListItem[] = await response.json();
         setReports(data);
-      } catch (error) {  
-        console.error("Failed to load reports:", error);  
-      }  
+      } catch (error) {
+        console.error("Failed to load reports:", error);
+      }
     }
     loadReports();
-  }, []); // the empty [] means it only runs once after the first page render
+  }, []);
 
   const filtered = normalizedQuery
     ? reports.filter(

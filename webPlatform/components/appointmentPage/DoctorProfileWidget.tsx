@@ -1,12 +1,12 @@
 import { Pencil, MapPin } from "lucide-react";
 import Image from "next/image";
-import { cookies } from "next/headers";
 import pool from "@/lib/db";
+import { getAuthUserFromCookies } from "@/lib/db-auth";
 
 export default async function DoctorProfileWidget() {
-  const cookieStore = await cookies();
-  const doctorName = cookieStore.get("userName")?.value ?? "Doctor";
-  const userId = cookieStore.get("userId")?.value;  
+  const auth = await getAuthUserFromCookies();
+  const doctorName = auth?.name ?? "Doctor";
+  const userId = auth?.id;  
 
   // get doctors working hours
   let workingHoursLabel = "N/A";  

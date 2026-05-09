@@ -3,11 +3,14 @@ import { verifyToken } from "@/lib/auth";
 
 export const config = {
   matcher: [
-    "/appointments/:path*",
+    "/appointments",
+    "/appointments/new",
+    "/appointments/:path+",
     "/conversation/:path*",
     "/reports/:path*",
     "/login",
     "/signup",
+    "/api/auth/set-cookie",
   ],
 };
 
@@ -20,7 +23,12 @@ export async function proxy(request: NextRequest) {
     if (token) {
       const payload = await verifyToken(token);
       if (payload) {
-        return NextResponse.redirect(new URL("/appointments", request.url));
+        return NextResponse.redirect(
+          new URL(
+            payload.accountType === "doctor" ? "/appointments" : "/appointments/new",
+            request.url
+          )
+        );
       }
     }
 
@@ -43,6 +51,26 @@ export async function proxy(request: NextRequest) {
   const payload = await verifyToken(token);
   if (!payload) {
     return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  const accountType = payload.accountType;
+
+  if (pathname === "/appointments") {
+    if (accountType !== "doctor") {
+      return NextResponse.redirect(new URL("/appointments/new", request.url));
+    }
+  } else if (pathname === "/appointments/new") {
+    if (accountType !== "patient") {
+      return NextResponse.redirect(new URL("/appointments", request.url));
+    }
+  } else if (pathname.startsWith("/conversation")) {
+    if (accountType !== "doctor") {
+      return NextResponse.redirect(new URL("/appointments", request.url));
+    }
+  } else if (pathname.startsWith("/reports")) {
+    if (accountType !== "doctor") {
+      return NextResponse.redirect(new URL("/appointments", request.url));
+    }
   }
 
   return NextResponse.next();

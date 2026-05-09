@@ -14,9 +14,13 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  function handleLogout() {
+  async function handleLogout() {
     localStorage.removeItem("auth_token");
     localStorage.removeItem("account_type");
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
     router.push("/login");
   }
 

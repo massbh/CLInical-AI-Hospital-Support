@@ -30,6 +30,14 @@ export default function LoginPage() {
                     "account_type",
                     result.user.accountType
                 );
+
+                await fetch("/api/auth/set-cookie", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({ token: result.token }),
+                });
+
                 const destination =
                     result.user.accountType === "doctor"
                         ? "/appointments"

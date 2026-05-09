@@ -7,10 +7,15 @@ const JWT_SECRET = new TextEncoder().encode(
 export interface AuthTokenPayload extends JWTPayload {
   id: string;
   name: string;
+  accountType: "patient" | "doctor";
 }
 
-export async function signToken(userId: string, name: string): Promise<string> {
-  return new SignJWT({ id: userId, name })
+export async function signToken(
+  userId: string,
+  name: string,
+  accountType: "patient" | "doctor"
+): Promise<string> {
+  return new SignJWT({ id: userId, name, accountType })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("1h")

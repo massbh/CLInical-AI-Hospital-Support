@@ -3,13 +3,10 @@ import bcrypt from "bcrypt";
 import pool from "@/lib/db";
 import { signToken } from "@/lib/auth";
 
-// checks login credentials and then logs in accordingly  
 export async function POST(request: NextRequest) {
-    // parse JSON body
-    const body = await request.json();  
-    const { email, password } = body;  
+    const body = await request.json();
+    const { email, password } = body;
 
-    // validate both fields are filled
     if (!email || !password) {
         return NextResponse.json(
             { error: "Missing required fields: email, password" },
@@ -18,7 +15,6 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-        // look up account by email
         const result = await pool.query(
             `SELECT id, name, email, password_hash, account_type
              FROM accounts
@@ -26,7 +22,6 @@ export async function POST(request: NextRequest) {
              [email]
         );
 
-        // if no account found return 401
         if (result.rows.length === 0) {
             return NextResponse.json(
                 { error: "Invalid email or password" },
@@ -36,10 +31,8 @@ export async function POST(request: NextRequest) {
 
         const account = result.rows[0];
 
-        // compare filled password against stored hash
         const passwordMatch = await bcrypt.compare(password, account.password_hash);
 
-        // if password do not match return 401
         if (!passwordMatch) {
             return NextResponse.json(
                 { error: "Invalid email or password" },
@@ -47,11 +40,9 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // sign JWT token
-        const token = await signToken(account.id, account.name);
+        const token = await signToken(account.id, account.name, account.account_type);
 
-        // login successful, return token and user info
-        return NextResponse.json({
+        const response = NextResponse.json({
             token,
             user: {
                 id: account.id,
@@ -59,6 +50,16 @@ export async function POST(request: NextRequest) {
                 accountType: account.account_type,
             },
         });
+
+        response.cookies.set("auth_token", token, {
+            httpOnly: true,
+            sameSite: "lax",
+            path: "/",
+            maxAge: 60 * 60,
+            secure: process.env.NODE_ENV === "production",
+        });
+
+        return response;
     } catch (error) {
         console.error("Login error:", error);
         return NextResponse.json(

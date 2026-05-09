@@ -26,6 +26,7 @@ export async function GET(_request: NextRequest) {
         // fetch only this doctor's appointments  
         const result = await pool.query(  
             `SELECT  
+                ba.id,  
                 ba.date::text,  
                 ba.time,  
                 a.name AS "patientName"  

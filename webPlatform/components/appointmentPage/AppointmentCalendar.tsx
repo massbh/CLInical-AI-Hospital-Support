@@ -3,12 +3,13 @@
 import { useState, useMemo, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { getAuthHeaders } from "@/lib/client-auth";
+import AppointmentDetailModal from "./AppointmentDetailModal";
 
 const APPOINTMENT_DISPLAY_LIMIT = 12;
 
 const COLORS = ["bg-[#2CA6AE]", "bg-green-400", "bg-yellow-400", "bg-pink-400", "bg-gray-400"];
 
-type CalendarAppointment = { time: string; title: string; color: string };
+type CalendarAppointment = { id: string; time: string; title: string; color: string };
 
 function formatDate(date: Date): string {
   const year = date.getFullYear();
@@ -26,6 +27,7 @@ export default function AppointmentCalendar() {
   const [selectedDate, setSelectedDate] = useState<Date>(today);
 
   const [appointments, setAppointments] = useState<Record<string, CalendarAppointment[]>>({});
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadAppointments() {
@@ -33,7 +35,7 @@ export default function AppointmentCalendar() {
         const response = await fetch("/api/appointments/calendar", {
           headers: getAuthHeaders(),
         });
-        const rows: { date: string; time: string; patientName: string }[] = await response.json();
+        const rows: { id: string; date: string; time: string; patientName: string }[] = await response.json();
 
         const grouped: Record<string, CalendarAppointment[]> = {};
         rows.forEach((row, index) => {
@@ -42,6 +44,7 @@ export default function AppointmentCalendar() {
           }
 
           grouped[row.date].push({
+            id: row.id,
             time: row.time,
             title: `Appointment with ${row.patientName}`,
             color: COLORS[index % COLORS.length],
@@ -89,6 +92,7 @@ export default function AppointmentCalendar() {
             {dayAppointments.slice(0, APPOINTMENT_DISPLAY_LIMIT).map((appointment, index) => (
               <div
                 key={index}
+                onClick={() => setSelectedAppointmentId(appointment.id)}
                 className="flex items-center gap-3 py-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 rounded-lg px-2 transition-colors group"
               >
                 <span className="text-[#2CA6AE] text-base font-medium w-20 shrink-0">
@@ -125,6 +129,12 @@ export default function AppointmentCalendar() {
           />
         </div>
       </div>
+
+      <AppointmentDetailModal
+        isOpen={selectedAppointmentId !== null}
+        onClose={() => setSelectedAppointmentId(null)}
+        appointmentId={selectedAppointmentId}
+      />
 
     </div>
   );

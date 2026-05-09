@@ -1,9 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";  
-import pool from "@/lib/db";  
-  
-// fetch notes for a specific appointment  
-export async function GET(request: NextRequest) {  
-  const appointmentId = new URL(request.url).searchParams.get("appointmentId");  
+import { NextRequest, NextResponse } from "next/server";
+import pool from "@/lib/db";
+import { requireDoctor } from "@/lib/db-auth";
+
+export async function GET(request: NextRequest) {
+    const authResult = await requireDoctor(request);
+    if (authResult instanceof NextResponse) return authResult;
+
+    const appointmentId = new URL(request.url).searchParams.get("appointmentId");
   
   if (!appointmentId) {  
     return NextResponse.json(  
@@ -28,8 +31,11 @@ export async function GET(request: NextRequest) {
 }  
   
 // create a new note for an appointment  
-export async function POST(request: NextRequest) {  
-  try {  
+export async function POST(request: NextRequest) {
+    const authResult = await requireDoctor(request);
+    if (authResult instanceof NextResponse) return authResult;
+
+    try {  
     const { content, source, appointmentId } = await request.json();  
   
     if (!content || !appointmentId) {  

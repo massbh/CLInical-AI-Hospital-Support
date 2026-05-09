@@ -1,5 +1,8 @@
+"use client";
+
 import { useState } from "react";
 import type { BookingFormProps as Props } from "@/types";
+import { getAuthHeaders } from "@/lib/client-auth";
 
 export default function BookingForm({selectedDate, selectedTime, selectedDoctor, doctors}: Props) {
     
@@ -46,9 +49,12 @@ export default function BookingForm({selectedDate, selectedTime, selectedDoctor,
             const day = String(selectedDate.getDate()).padStart(2, "0");  
             const dateString = `${year}-${month}-${day}`;  
   
-            const response = await fetch("/api/appointments", {  
-                method: "POST",  
-                headers: { "Content-Type": "application/json" },  
+            const response = await fetch("/api/appointments", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    ...getAuthHeaders(),
+                },
                 body: JSON.stringify({  
                     doctorId: selectedDoctor,  
                     date: dateString,  

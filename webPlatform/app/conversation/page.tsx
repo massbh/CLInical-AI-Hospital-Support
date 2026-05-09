@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import  NoteCard  from "../../components/conversationScreen/NoteCard";
-import SuggestionCard  from "../../components/conversationScreen/SuggestionCard";
-import  StreamStatus  from "../../components/conversationScreen/StreamStatus";
-import Sidebar from "../../components/appointmentPage/Sidebar"
+import NoteCard from "../../components/conversationScreen/NoteCard";
+import SuggestionCard from "../../components/conversationScreen/SuggestionCard";
+import StreamStatus from "../../components/conversationScreen/StreamStatus";
+import Sidebar from "../../components/appointmentPage/Sidebar";
 import type { Note, Suggestion } from "@/types";
+import { getAuthHeaders } from "@/lib/client-auth";
 
 const DISPLAY_LIMIT = 10;
 const POLL_INTERVAL = Number(process.env.NEXT_PUBLIC_POLL_INTERVAL_MS ?? 3000);
@@ -20,45 +21,41 @@ export default function ConversationPage() {
     const [isToggling, setIsToggling] = useState(false);
     const [toggleError, setToggleError] = useState<string | null>(null);
 
-     // reference to track the current appointment ID without re-triggering the polling effect
     const appointmentIdRef = useRef<string | null>(null);
     const isAppointmentActiveRef = useRef(false);
 
-    // find current appointment for logged in user via poll
     useEffect(() => {
         async function loadCurrentAppointment() {
-        try {
-            const response = await fetch("/api/appointments/current");
-            if (!response.ok) {
-                const data = await response.json();
-                setError(data.error || "Could not find current appointment");
-                return;
+            try {
+                const response = await fetch("/api/appointments/current", {
+                    headers: getAuthHeaders(),
+                });
+                if (!response.ok) {
+                    const data = await response.json();
+                    setError(data.error || "Could not find current appointment");
+                    return;
+                }
+                const appointment = await response.json();
+                setError(null);
+
+                if (appointment.id !== appointmentIdRef.current) {
+                    appointmentIdRef.current = appointment.id;
+                    setAppointmentId(appointment.id);
+                    setNotes([]);
+                    setSuggestions([]);
+                    setIsAppointmentActive(false);
+                    isAppointmentActiveRef.current = false;
+                }
+            } catch {
+                setError("Failed to connect to server");
             }
-            const appointment = await response.json();
-            setError(null);
-
-            // if the appointment changed, clear the old notes/suggestions
-            if (appointment.id !== appointmentIdRef.current) {
-                appointmentIdRef.current = appointment.id;
-                setAppointmentId(appointment.id);
-                setNotes([]);
-                setSuggestions([]);
-                setIsAppointmentActive(false);
-                isAppointmentActiveRef.current = false;
-            }
-
-
-        } catch {
-            setError("Failed to connect to server");
         }
-        }
-        // check immediately, then every POLL_INTERVAL
+
         loadCurrentAppointment();
         const interval = setInterval(loadCurrentAppointment, POLL_INTERVAL);
         return () => clearInterval(interval);
     }, []);
 
-    // stop the streaming session if the page unmounts while it's running
     useEffect(() => {
         return () => {
             if (!isAppointmentActiveRef.current) return;
@@ -67,45 +64,45 @@ export default function ConversationPage() {
             fetch(`/api/appointments/${id}/stop`, {
                 method: "POST",
                 keepalive: true,
+                headers: getAuthHeaders(),
             }).catch(() => {});
         };
     }, []);
 
-    // poll notes and suggestions only while the appointment is active
     useEffect(() => {
         if (!appointmentId || !isAppointmentActive) return;
 
         async function fetchData() {
-        try {
-            const [notesResponse, suggestionsResponse] = await Promise.all([
-            fetch(`/api/notes?appointmentId=${appointmentId}`),
-            fetch(`/api/suggestions?appointmentId=${appointmentId}`),
-            ]);
+            try {
+                const [notesResponse, suggestionsResponse] = await Promise.all([
+                    fetch(`/api/notes?appointmentId=${appointmentId}`, { headers: getAuthHeaders() }),
+                    fetch(`/api/suggestions?appointmentId=${appointmentId}`, { headers: getAuthHeaders() }),
+                ]);
 
-            if (notesResponse.ok) {
-            const notesData = await notesResponse.json();
-            setNotes(
-                notesData.map((n: Note) => ({
-                    ...n,
-                    timestamp: new Date(n.timestamp),
-                }))
-            );
+                if (notesResponse.ok) {
+                    const notesData = await notesResponse.json();
+                    setNotes(
+                        notesData.map((n: Note) => ({
+                            ...n,
+                            timestamp: new Date(n.timestamp),
+                        }))
+                    );
+                }
+
+                if (suggestionsResponse.ok) {
+                    const suggestionsData = await suggestionsResponse.json();
+                    setSuggestions(
+                        suggestionsData.map((s: Suggestion) => ({
+                            ...s,
+                            timestamp: new Date(s.timestamp),
+                        }))
+                    );
+                }
+
+                setLastUpdate(new Date());
+            } catch (err) {
+                console.error("Polling error:", err);
             }
-
-            if (suggestionsResponse.ok) {
-            const suggestionsData = await suggestionsResponse.json();
-            setSuggestions(
-                suggestionsData.map((s: Suggestion) => ({
-                    ...s,
-                    timestamp: new Date(s.timestamp),
-                }))
-            );
-            }
-
-            setLastUpdate(new Date());
-        } catch (err) {
-            console.error("Polling error:", err);
-        }
         }
 
         fetchData();
@@ -121,7 +118,7 @@ export default function ConversationPage() {
         try {
             const response = await fetch(
                 `/api/appointments/${appointmentId}/${action}`,
-                { method: "POST" }
+                { method: "POST", headers: getAuthHeaders() }
             );
             if (!response.ok) {
                 const data = await response.json().catch(() => ({}));
@@ -140,7 +137,6 @@ export default function ConversationPage() {
         }
     }
 
-    // show error/no-appointment state
     if (error) {
         return (
             <div className="flex h-screen size-full overflow-hidden bg-[#F4F7F7] p-4">
@@ -154,9 +150,6 @@ export default function ConversationPage() {
             </div>
         );
     }
-
-
-
 
     return (
     <div className="flex h-screen size-full overflow-hidden bg-[#F4F7F7] p-4">

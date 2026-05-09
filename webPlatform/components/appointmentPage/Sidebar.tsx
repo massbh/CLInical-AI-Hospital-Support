@@ -2,7 +2,7 @@
 
 import { CalendarDays, LogOut, MessageSquareText, ClipboardList } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const navItems = [
   { href: "/appointments", label: "Appointments", icon: CalendarDays },
@@ -12,6 +12,17 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleLogout() {
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("account_type");
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    router.push("/login");
+  }
 
   return (
     <aside className="flex h-full w-20 shrink-0 flex-col items-center justify-between rounded-xl bg-[#167980] py-5">
@@ -41,14 +52,14 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <Link
-        href="/login"
+      <button
+        onClick={handleLogout}
         aria-label="Log out"
         title="Log out"
-        className="rounded-lg p-3 text-white/85 transition hover:bg-white/10 hover:text-white"
+        className="rounded-lg p-3 text-white/85 transition hover:bg-white/10 hover:text-white cursor-pointer"
       >
         <LogOut className="h-5 w-5" />
-      </Link>
+      </button>
     </aside>
   );
 }

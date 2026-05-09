@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";  
-import bcrypt from "bcrypt";  
-import pool from "@/lib/db";  
-import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcrypt";
+import pool from "@/lib/db";
+import { signToken } from "@/lib/auth";
 
 // checks login credentials and then logs in accordingly  
 export async function POST(request: NextRequest) {
@@ -47,25 +47,17 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // add cookie to store user id and user name
-        const cookieStore = await cookies();
-        cookieStore.set("userId", account.id, {
-            httpOnly: true,         // JS can't read/modify it
-            secure: false,          // required https for true
-            path: "/",              // available to all routes
-            maxAge: 60 * 60 * 24    // expires in 24 hours
-        });
-        cookieStore.set("userName", account.name, {
-            httpOnly: false,         
-            secure: false,          
-            path: "/",              
-            maxAge: 60 * 60 * 24   
-        });
+        // sign JWT token
+        const token = await signToken(account.id, account.name);
 
-        // login successful, return account
+        // login successful, return token and user info
         return NextResponse.json({
-            id: account.id,
-            name: account.name,
+            token,
+            user: {
+                id: account.id,
+                name: account.name,
+                accountType: account.account_type,
+            },
         });
     } catch (error) {
         console.error("Login error:", error);

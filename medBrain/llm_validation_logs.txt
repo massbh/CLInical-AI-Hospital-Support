@@ -115,3 +115,49 @@ referral to an emergency department with medical clearance may be indicated. A t
 2026-05-10 16:28:02 | Attempt: 2 | Valid: True | Error: None | Msg: No new information was input.
 2026-05-10 16:28:28 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
 2026-05-10 16:28:33 | Attempt: 2 | Valid: True | Error: None | Msg: Patient reports severe headache after falling down stairs and striking the head, with mild redness at the top of the head.
+2026-05-10 16:42:42 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:42:48 | Attempt: 2 | Valid: True | Error: None | Msg: Fever, cough, and difficulty breathing are concerning symptoms suggestive of pneumonia. Obtain chest x-ray to confirm diagnosis. Consider appropriate antibiotics.
+2026-05-10 16:43:08 | Attempt: 1 | Valid: True | Error: None | Msg: This patient's notes are not informative enough for me to draw any conclusions, make recommendations, or provide advice.
+2026-05-10 16:43:33 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports severe headache after falling down stairs and striking the head, with mild redness at the top of the head.
+2026-05-10 16:44:09 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports recurring fatigue, headache, orthostatic dizziness, and difficulty concentrating.
+2026-05-10 16:44:32 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 16:44:39 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 16:44:53 | Attempt: 3 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 16:45:22 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:45:29 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 16:45:40 | Attempt: 3 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:46:13 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:46:22 | Attempt: 2 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:46:27 | Attempt: 3 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:46:53 | Attempt: 1 | Valid: True | Error: None | Msg: Patient presents with multiple anxiety medications for unknown duration and reports worsening symptoms of depression.
+2026-05-10 16:47:19 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports receiving an unspecified medication from their family member.
+2026-05-10 16:47:39 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:47:51 | Attempt: 2 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:47:58 | Attempt: 3 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:48:31 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports symptoms of anxiety and a history of caffeinated beverage consumption. Clinical guidelines recommend the use of caffeine tablets as an alternative to benzodiazepines for managing anxiety.
+2026-05-10 16:48:51 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports symptomatic improvement after receiving treatment, no new findings.
+2026-05-10 16:49:14 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports dizziness after starting lisinopril.
+2026-05-10 16:49:35 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:49:38 | Attempt: 2 | Valid: True | Error: None | Msg: Patient reports no symptoms, no medications, no history, no findings mentioned.
+2026-05-10 16:49:58 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 16:50:04 | Attempt: 2 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:50:08 | Attempt: 3 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 17:02:22 | Attempt: 1 | Valid: True | Error: None | Msg: Patient does not report any symptoms, findings, medications, or history that would justify an output from me.
+2026-05-10 17:02:50 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports persistent and severe headache after falling down stairs and striking the head, with mild redness at the top of the head.
+2026-05-10 17:05:09 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 17:05:11 | Attempt: 2 | Valid: True | Error: None | Msg: No input from this patient.
+2026-05-10 17:05:37 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports daily fatigue and frequent severe headaches mainly in the forehead and behind the eyes.
+2026-05-10 17:06:02 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports poor sleep quality for several weeks, citing long working hours and resulting average of 5 hours of sleep per night.
+2026-05-10 17:06:36 | Attempt: 1 | Valid: True | Error: None | Msg: Patient describes fatigue and other symptoms of low blood pressure, possibly due to dehydration from inadequate fluid intake. Low blood pressure can lead to syncope (dizziness) upon standing quickly. Consider appropriate dietary advice for adequate hydration.
+2026-05-10 17:06:58 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports severe headache after falling down stairs and striking the head, with mild redness at the top of the head.
+2026-05-10 17:07:28 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports prolonged use of Discord messaging platform since December, potential sleep deprivation, and excessive energy drink consumption.
+2026-05-10 17:07:51 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 17:07:56 | Attempt: 2 | Valid: True | Error: None | Msg: Patient reports no current medication regimen.
+2026-05-10 17:08:26 | Attempt: 1 | Valid: True | Error: None | Msg: Patient presents with long-term anxiety medication use and recent worsening symptoms. There is a lack of established improvement in anxiety despite medication use.
+2026-05-10 17:08:48 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports ingesting an unknown medication after falling down stairs and striking the head.
+2026-05-10 17:09:09 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 17:09:14 | Attempt: 2 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 17:09:23 | Attempt: 3 | Valid: True | Error: None | Msg: Patient reports severe headache after falling down stairs and striking the head, with mild redness at the top of the head.
+2026-05-10 17:09:48 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports increasing anxiety symptoms and high caffeine intake.
+2026-05-10 17:10:17 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 17:10:19 | Attempt: 2 | Valid: True | Error: None | Msg: No clinically relevant information was captured from this input.

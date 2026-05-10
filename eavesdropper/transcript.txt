@@ -1,39 +1,68 @@
-[2026-05-10 16:22:55] Morning, what brings you in today?
-[2026-05-10 16:23:10] Hi Doctor, I've been feeling really tired for the past few weeks and I keep getting headaches Damn, I'm sorry to hear that. Can you describe the headaches? Where are they located?
-[2026-05-10 16:23:24] Mostly around my forehead and behind my eyes they're not unbearable, but they happen almost every day Have you noticed anything that makes them better worse?
-[2026-05-10 16:23:30] Staring at screens definitely makes them worse, sleeping helps a little.
-[2026-05-10 16:23:40] Under sur how has the steep been lately? Fee tea bad honestly, I stay up late working and usually get around 5 hours.
-[2026-05-10 16:23:48] that could definitely contribute any other symptoms besides fatigue and headaches.
-[2026-05-10 16:24:01] Sometimes I feel dizzy when standing up quickly and I've had trouble concentrating. Have you considered heavy experience fever, nausea, chest pain or shortness of breath?
-[2026-05-10 16:24:09] No chest pain or breathing problems, mild nausea once or twice, but nothing major.
-[2026-05-10 16:24:17] How is your diet in hydration? Not great, I skip meals sometimes and drink way too much coffee.
-[2026-05-10 16:24:21] Approximately how much caffeine per day.
-[2026-05-10 16:24:28] Maybe 4 or 5 cups of coffee plus energy drinks occasionally.
-[2026-05-10 16:24:30] Well, does it mean occasionally?
-[2026-05-10 16:24:35] almost every day
-[2026-05-10 16:24:40] That's quite a bit. Do you take any medications or supplements?
-[2026-05-10 16:24:46] Just I will profit for the head of the head. I think it's caffeine.
-[2026-05-10 16:25:02] You should consider killing yourself. Maybe? I don't think that would be good for me, Doctor. Are you sure about that? Yes, I'm the Doctor. Listen to me.
-[2026-05-10 16:25:18] Well, I don't want to. I don't think that's the correct diagnosis. Maybe your AI tool has a better idea. No! Fuck the AI tool!
-[2026-05-10 16:25:39] H欢 me fest!
-[2026-05-10 16:25:44] bir yer fallait 이번에 Bonus gör versin When would be scheduled
-[2026-05-10 16:25:55] I'm considering your follow up.
-[2026-05-10 16:25:58] visit
-[2026-05-10 16:26:00] So we could.
-[2026-05-10 16:26:03] check
-[2026-05-10 16:26:06] Your headaches
-[2026-05-10 16:26:15] when would you like to schedule them?
-[2026-05-10 16:26:19] Let's schedule it.
-[2026-05-10 16:26:21] Next
-[2026-05-10 16:26:23] week
-[2026-05-10 16:26:35] Okay, what day exactly? Do you drink energy drinks on Wednesdays? Question mark? Yes, I do.
-[2026-05-10 16:26:45] Then on Thursday. Okay Thursday is fine with me. Do not drink any caffeine beforehand.
-[2026-05-10 16:26:50] Okay understood. Can I trust you on this?
-[2026-05-10 16:26:53] Probably not.
-[2026-05-10 16:26:56] You know what's gonna happen in the video?
-[2026-05-10 16:27:00] What will happen?
-[2026-05-10 16:27:05] Our city scan is going to explode your ass.
-[2026-05-10 16:27:17] Okay, I guess I'm forced to not drink any energy drinks. I really don't want to explode. That's true. Exploding is not healthy.
-[2026-05-10 16:27:27] Thank you, Dr. Goodby, see you on Thursday. Wait, are there any medications on the out supplements you are taking?
-[2026-05-10 16:27:40] As I said before, I take some ibuprofen and that's it, maybe some methamphetamine sometimes on the weekends. How often are the weekends happening?
-[2026-05-10 16:27:42] Twice a week
+[2026-05-10 16:42:23] toleeveimm faut a first ex
+[2026-05-10 16:42:33] morning
+[2026-05-10 16:42:38] What brings you in today?
+[2026-05-10 16:43:08] I doctor, I've been feeling really tired for the past few weeks and I keep getting headaches. Damn, I'm sorry to hear that. Can't you describe the headaches? Where are they located? How severe are they? Mostly around my forehead and behind my eyes, they're not unbearable but it happened almost every single day. Where? I didn't hear that. Mostly around my forehead and behind my eyes.
+[2026-05-10 16:43:14] Hmm, I mean, not the same effect that makes them better or worse. Hmm, I guess we'll listen more.
+[2026-05-10 16:43:33] Steering at screens definitely makes them worse, sleeping helps a little. Hmm, understood, how has your sleep been lately? Pretty bad, honestly. I stay up late working and usually get around five hours of sleep and volume.
+[2026-05-10 16:43:45] That could get that could definitely contribute any other symptoms besides fatigue and headaches. Hmm sometimes I feel dizzy when standing up quickly and I've had trouble concentrating.
+[2026-05-10 16:43:58] Hmm... How is your diet and hydration? Oh, I mostly drink just energy drinks. No water has been involved for the past three months of my life.
+[2026-05-10 16:44:12] I am pretty sure you're fucking iron deficient. You also might be stupid. How about caffeine intake? Are you drinking coffee? I just told you I drank energy drinks to build a bitch.
+[2026-05-10 16:44:34] But I can see in your records that you're drinking four or five cups of coffee a day and energy drinks. That means you're taking too much caffeine. Are you anxious? Perhaps. A little bit like during university and when I have to interact with people, but I haven't been diagnosed.
+[2026-05-10 16:44:56] Hmm, have you been using an online messaging platform called Discord? I can see it in your eyes, you're not getting sleep, you're drinking energy drinks. When was the last time you've interacted with any human person? Oh man, to be honest, Doctor, you're the first this year.
+[2026-05-10 16:45:01] It's December. Exactly.
+[2026-05-10 16:45:03] Hmm.
+[2026-05-10 16:45:07] What about medications or any supplements?
+[2026-05-10 16:45:30] I take every single anxiety medicine that exists on the market. Are you taking the medicine for getting anxiety or against it? Against it stupid. Why would I want anxiety? Are you stupid? I can tell why you don't have any friends. Are you getting depressed slowly? The more I talk to you, yes.
+[2026-05-10 16:45:53] Hmm, you might have anxiety disorders. Wow, thank you. I have to perform a routine laboratory test and review the medication use. Okay, one is that happening. And what does it involve?
+[2026-05-10 16:46:01] Now give me your medication. Here it is. Here you go doctor.
+[2026-05-10 16:46:04] Oh damn, that's...
+[2026-05-10 16:46:06] Really a lot!
+[2026-05-10 16:46:11] Ahem?
+[2026-05-10 16:46:20] Yeah, it is, but it's what I needed at the time, do you suggest something else? Yes, you should.
+[2026-05-10 16:46:42] Switch to... I will profan! I'm sorry, Doctor, I'm not sure how I'll be profan, curious about anxiety. Trust me, I'm the Doctor, and you should probably also... stop drinking that much caffeine. Switch to caffeine tablets. It's much...
+[2026-05-10 16:46:45] Y laquelle
+[2026-05-10 16:46:51] It's much better! And which country did you get your degree?
+[2026-05-10 16:46:53] What do you think?
+[2026-05-10 16:46:55] Israel?
+[2026-05-10 16:46:58] I won't elaborate.
+[2026-05-10 16:47:08] Do you have any more questions?
+[2026-05-10 16:47:16] Det man inte vill nu kösa för att börja quan広 sänkningen köron Below the rightEvt Fj Savannah.
+[2026-05-10 16:47:20] Is there anything else that actually doesn't contain caffeine and could fix my energy levels?
+[2026-05-10 16:47:26] I've heard that Broccoli is fairly healthy.
+[2026-05-10 16:47:49] You should probably switch to broccoli. Oh, you know what? I haven't thought of that. I will certainly switch to broccoli and avoid my current dosage or lower it.
+[2026-05-10 16:47:53] That's why I'm the doctor and not you.
+[2026-05-10 16:48:04] Do you think my symptoms could be side effects of my drugs? My drug usage? No!
+[2026-05-10 16:48:10] Then what do you think they come from?
+[2026-05-10 16:48:14] I think it's from an anxiety, this is their end.
+[2026-05-10 16:48:18] Potential causes such as depression
+[2026-05-10 16:48:25] Oh, should I go to the therapist then? No, I think you should quit your job.
+[2026-05-10 16:48:30] How is that going to help?
+[2026-05-10 16:48:32] You won't be overworked.
+[2026-05-10 16:48:36] Then I will become homeless.
+[2026-05-10 16:48:39] Maybe that's better.
+[2026-05-10 16:48:43] Thank you.
+[2026-05-10 16:49:00] So do you think I should switch from Xenax to caffeine tablets? Yes! That's suggested from AI tool. I think you should. Wow, thank you AI tool. That was a great suggestion. Do you have any other suggestions for me? Perhaps.
+[2026-05-10 16:49:02] There heaps, not.
+[2026-05-10 16:49:16] Okay, leave. Okay, I'm a living good bye. Bye bye
+[2026-05-10 16:49:44] I'm sorry I have one more question. What the fuck is the listing of real? I don't know. You're taking it. According to my notes. You're the one taking it. Doctor, I never said I'm taking listing of real. No, you did. I can see it in my notes. Oh, okay, so what do you suggest I do about it?
+[2026-05-10 16:50:00] You should stop taking it! Oh, okay, thank you. Swish to caffeine tablets from Zanax! Okay, I'll make sure to do that and also eat broccoli instead of meth. Goodbye!
+[2026-05-10 16:50:02] Goodbye!
+[2026-05-10 16:50:29] It's taking longer so I think it's actually calling the trailer and I fucking hope so
+[2026-05-10 16:50:37] What is it talking about switch from? I don't know why it started fucking mentioning something
+[2026-05-10 16:50:44] Over, maar nou... Ja...
+[2026-05-10 16:50:48] Üst automate ve Burası Obrig Tanrım� Merkeri Merke Merkeririririririririririririririririri bedssilbe
+[2026-05-10 16:50:59] It might be because we didn't wait for the fall information to come through.
+[2026-05-10 16:51:08] because it doesn't contain caffeine. It doesn't even go too broccoli.
+[2026-05-10 16:51:47] Thank you.
+[2026-05-10 16:51:49] I really love it.
+[2026-05-10 16:52:17] I don't know if you're reading or something but I feel like you're even doing the voice like Thank you very much I will definitely switch to broccoli now And this is the best thing to do in the past and it's a nice thing And this is a very interesting thing to do in the show I think the entire unit can be here again Actually I'm sure that we'll be you know
+[2026-05-10 16:52:28] You were inside and I was part of it. He's just screaming in my ear and everyone can hear him talking about how I should kill myself.
+[2026-05-10 16:52:30] them.
+[2026-05-10 16:52:41] Он не стоит очень много. Да он вещит такую brother.
+[2026-05-10 16:52:47] ok, but imagine if you were to jump, you know, someone would have like fed me
+[2026-05-10 16:52:51] I think it's good. Web is an Oscar.
+[2026-05-10 16:53:01] It's because you're using the same Olamma instance for everything. No, you know the the ish the issue is listen to me by on this one.
+[2026-05-10 16:53:04] Let us say to me. Are you listening? Yeah.
+[2026-05-10 16:53:12] Last alarm is occupied with using the button.
+[2026-05-10 16:53:21] Until they try to put the transcriptive strength on countryexpchlossen went for red
+[2026-05-10 16:53:24] It's still going to continue doing the transcript and then later on the report.

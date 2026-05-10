@@ -16,6 +16,10 @@ export default function ReportRow({ report }: Props) {
 
   async function handleDownloadPdf(event: React.MouseEvent<HTMLButtonElement>) {
     event.currentTarget.closest("details")?.removeAttribute("open");
+    if (!report.finalized) {
+      alert("Finalize the report from the editor before downloading the PDF.");
+      return;
+    }
 
     const suggestedName = `report-${report.id}.pdf`;
 
@@ -103,7 +107,12 @@ export default function ReportRow({ report }: Props) {
           <div className="absolute left-0 top-full z-10 mt-1 min-w-[160px] rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
             <button
               onClick={handleDownloadPdf}
-              disabled={isDownloading}
+              disabled={isDownloading || !report.finalized}
+              title={
+                report.finalized
+                  ? ""
+                  : "Finalize the report from the editor before downloading"
+              }
               className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-gray-700 transition hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isDownloading ? (

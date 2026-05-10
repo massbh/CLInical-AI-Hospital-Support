@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
+
+from app import db
 from app.auth import verify_api_key
-from app import db, template, email_sender
+from app.service import ReportNotFound, send_report_email
 
 router = APIRouter()
 
@@ -22,29 +24,25 @@ class SendReportResponse(BaseModel):
 @router.post(
     "/send-report",
     response_model=SendReportResponse,
-    summary="Send a report to the patient via email",
+    summary="Manually send a report by id (mirrors what the scheduler does)",
 )
 def send_report(
     body: SendReportRequest,
     _: str = Depends(verify_api_key),
 ) -> SendReportResponse:
-    report = db.fetch_report(body.report_id)
-
-    if not report:
+    try:
+        recipient = send_report_email(body.report_id)
+    except ReportNotFound:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Report not found",
         )
-
-    sections = db.fetch_report_sections(body.report_id)
-    subject, html, text = template.build_email(report, sections)
-
-    try:
-        email_sender.send_email(report["patient_email"], subject, html, text)
     except Exception as exc:
+        db.mark_failed(body.report_id, str(exc))
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail=f"Failed to send email: {exc}",
         )
 
-    return SendReportResponse(success=True, recipient=report["patient_email"])
+    db.mark_sent(body.report_id)
+    return SendReportResponse(success=True, recipient=recipient)

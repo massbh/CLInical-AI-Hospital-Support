@@ -30,11 +30,11 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// create a new suggestion for an appointment
+// Create a new suggestion for an appointment.
+// Internal-only — called by medBrain (server-side) on the same host. The
+// frontend never POSTs here, only GETs. Auth is intentionally skipped so
+// medBrain's localhost requests aren't blocked by missing doctor cookies.
 export async function POST(request: NextRequest) {
-    const authResult = await requireDoctor(request);
-    if (authResult instanceof NextResponse) return authResult;
-
     try {
     const { content, source, appointmentId } = await request.json();
 

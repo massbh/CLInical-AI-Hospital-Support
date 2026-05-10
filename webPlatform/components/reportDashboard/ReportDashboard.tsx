@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import ReportRow from "./ReportRow";
+import PendingReportRow from "./PendingReportRow";
 import { ReportListItem } from "@/types";
 import { getAuthHeaders } from "@/lib/client-auth";
 
@@ -28,17 +29,20 @@ export default function ReportDashboard() {
     loadReports();
   }, []);
 
-  const filtered = normalizedQuery
-    ? reports.filter(
-        (r) =>
-          r.title.toLowerCase().includes(normalizedQuery) ||
-          r.content.toLowerCase().includes(normalizedQuery) ||
-          r.patientName.toLowerCase().includes(normalizedQuery) ||
-          r.patientSurname.toLowerCase().includes(normalizedQuery) ||
-          r.date.toLowerCase().includes(normalizedQuery)
-      )
-    : reports;
-  const visibleReports = filtered.slice(0, REPORT_DISPLAY_LIMIT);
+  const matches = (r: ReportListItem) =>
+    !normalizedQuery ||
+    r.title.toLowerCase().includes(normalizedQuery) ||
+    r.content.toLowerCase().includes(normalizedQuery) ||
+    r.patientName.toLowerCase().includes(normalizedQuery) ||
+    r.patientSurname.toLowerCase().includes(normalizedQuery) ||
+    r.date.toLowerCase().includes(normalizedQuery);
+
+  const pending = reports
+    .filter((r) => !r.finalized && matches(r))
+    .slice(0, REPORT_DISPLAY_LIMIT);
+  const finalized = reports
+    .filter((r) => r.finalized && matches(r))
+    .slice(0, REPORT_DISPLAY_LIMIT);
 
   return (
     <div className="flex flex-col h-full gap-6">
@@ -58,7 +62,41 @@ export default function ReportDashboard() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto rounded-xl bg-white shadow-sm border border-gray-100">
+      <section className="rounded-xl bg-white shadow-sm border border-gray-100">
+        <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+          <h2 className="text-base font-semibold text-gray-950">Pending finalization</h2>
+          <span className="text-xs text-gray-500">{pending.length}</span>
+        </header>
+        <table className="w-full">
+          <thead className="bg-gray-50/80">
+            <tr>
+              <th className="py-3 px-4 text-left text-xs font-bold tracking-widest text-[#2CA6AE]">PATIENT</th>
+              <th className="py-3 px-4 text-left text-xs font-bold tracking-widest text-[#2CA6AE]">DATE</th>
+              <th className="py-3 px-4 text-left text-xs font-bold tracking-widest text-[#2CA6AE]">TITLE</th>
+              <th className="py-3 px-4 text-right text-xs font-bold tracking-widest text-[#2CA6AE]">ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pending.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="py-6 text-center text-sm text-gray-500">
+                  No reports awaiting finalization.
+                </td>
+              </tr>
+            ) : (
+              pending.map((report) => (
+                <PendingReportRow key={report.id} report={report} />
+              ))
+            )}
+          </tbody>
+        </table>
+      </section>
+
+      <section className="flex-1 overflow-y-auto rounded-xl bg-white shadow-sm border border-gray-100">
+        <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+          <h2 className="text-base font-semibold text-gray-950">Finalized</h2>
+          <span className="text-xs text-gray-500">{finalized.length}</span>
+        </header>
         <table className="w-full">
           <thead className="bg-gray-50/80 sticky top-0">
             <tr>
@@ -69,20 +107,20 @@ export default function ReportDashboard() {
             </tr>
           </thead>
           <tbody>
-            {filtered.length === 0 ? (
+            {finalized.length === 0 ? (
               <tr>
                 <td colSpan={4} className="py-8 text-center text-sm text-gray-500">
-                  No reports found matching your search.
+                  No finalized reports yet.
                 </td>
               </tr>
             ) : (
-              visibleReports.map((report) => (
+              finalized.map((report) => (
                 <ReportRow key={report.id} report={report} />
               ))
             )}
           </tbody>
         </table>
-      </div>
+      </section>
     </div>
   );
 }

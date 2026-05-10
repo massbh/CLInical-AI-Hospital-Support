@@ -100,12 +100,16 @@ CREATE TABLE reports (
     title VARCHAR(255) NOT NULL,
     content TEXT,
     preview BOOLEAN DEFAULT NULL,
+    email_status VARCHAR(20) DEFAULT NULL CHECK (email_status IN ('ready', 'sent', 'failed')),
+    email_sent_at TIMESTAMP WITH TIME ZONE,
+    email_last_error TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_reports_patient ON reports(patient_id);
 CREATE INDEX idx_reports_doctor ON reports(doctor_id);
 CREATE INDEX idx_reports_date ON reports(date DESC);
+CREATE INDEX idx_reports_email_status ON reports(email_status);
 
 
 

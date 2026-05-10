@@ -1,39 +1,28 @@
-def build_email(report: dict, sections: list[dict]) -> tuple[str, str, str]:
+from html import escape
+
+
+def build_email(report: dict) -> tuple[str, str, str]:
     subject = (
         f"Medical Report – {report['patient_name']} {report['patient_surname']}"
         f" – {report['date']}"
     )
-    return subject, _build_html(report, sections), _build_text(report, sections)
+    return subject, _build_html(report), _build_text(report)
 
 
-def _build_html(report: dict, sections: list[dict]) -> str:
-    sections_html = "".join(
-        f"<h2>{section['title']}</h2><p>{section['content'] or 'N/A'}</p>"
-        for section in sections
-    )
-    stamp = (
-        f"Best Regards,<br><strong>Dr. {report['doctor_name']}</strong>"
-        "<br>CLInical Hospital Support"
-    )
+def _build_html(report: dict) -> str:
+    patient = escape(report["patient_name"])
+    date = escape(str(report["date"]))
+    doctor = escape(report["doctor_name"])
     return f"""<html><body>
-<h1>{report['title']}</h1>
-<p><strong>Patient:</strong> {report['patient_name']} {report['patient_surname']}</p>
-<p><strong>Date:</strong> {report['date']}</p>
-<p><strong>Doctor:</strong> Dr. {report['doctor_name']}</p>
-<hr>{sections_html}<hr>
-<p>{stamp}</p>
+<p>Hi {patient},</p>
+<p>Attached you can see the report from your appointment on {date}.</p>
+<p>Best regards,<br><strong>Dr. {doctor}</strong><br>CLInical Hospital Support</p>
 </body></html>"""
 
 
-def _build_text(report: dict, sections: list[dict]) -> str:
-    lines = [
-        report["title"],
-        f"Patient: {report['patient_name']} {report['patient_surname']}",
-        f"Date: {report['date']}",
-        f"Doctor: Dr. {report['doctor_name']}",
-        "",
-    ]
-    for section in sections:
-        lines += [section["title"], section["content"] or "N/A", ""]
-    lines += ["Best Regards,", f"Dr. {report['doctor_name']}", "CLInical Hospital Support"]
-    return "\n".join(lines)
+def _build_text(report: dict) -> str:
+    return (
+        f"Hi {report['patient_name']},\n\n"
+        f"Attached you can see the report from your appointment on {report['date']}.\n\n"
+        f"Best regards,\nDr. {report['doctor_name']}\nCLInical Hospital Support\n"
+    )

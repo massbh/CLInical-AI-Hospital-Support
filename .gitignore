@@ -1,2 +1,3 @@
 transcript.txt
 __pycache__/
+*.env

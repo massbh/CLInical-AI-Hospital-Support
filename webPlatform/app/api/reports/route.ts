@@ -12,7 +12,8 @@ export async function GET(_request: NextRequest) {
                     patient_surname AS "patientSurname",
                     date::text,
                     title,
-                    content
+                    content,
+                    (preview IS FALSE) AS "finalized"
             FROM reports
             ORDER BY date DESC`
         );

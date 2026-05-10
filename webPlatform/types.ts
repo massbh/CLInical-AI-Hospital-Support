@@ -126,6 +126,7 @@ export type ReportListItem = {
   date: string;
   title: string;
   content: string;
+  finalized: boolean;
 };
 
 export type ReportRowProps = {

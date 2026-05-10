@@ -7,10 +7,10 @@ import pool from "@/lib/db";
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { appointmentId: string } }
+  { params }: { params: Promise<{ appointmentId: string }> }
 ) {
   try {
-    const appointmentId = params.appointmentId;
+    const { appointmentId } = await params;
     const { patient_name, patient_surname, doctor_name, title } =
       await request.json();
 

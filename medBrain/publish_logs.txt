@@ -1,0 +1,8 @@
+2026-05-10 13:57:35 | kind=Note | appointment_id=f1b5aa1b-c13e-439b-a425-a82f2da9a974 | error=Client error '401 Unauthorized' for url 'http://localhost:3000/api/notes'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+2026-05-10 13:58:09 | kind=Note | appointment_id=f1b5aa1b-c13e-439b-a425-a82f2da9a974 | error=Client error '401 Unauthorized' for url 'http://localhost:3000/api/notes'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+2026-05-10 14:05:20 | kind=Note | appointment_id=f1b5aa1b-c13e-439b-a425-a82f2da9a974 | error=Client error '401 Unauthorized' for url 'http://localhost:3000/api/notes'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+2026-05-10 14:05:40 | kind=Note | appointment_id=f1b5aa1b-c13e-439b-a425-a82f2da9a974 | error=Client error '401 Unauthorized' for url 'http://localhost:3000/api/notes'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401

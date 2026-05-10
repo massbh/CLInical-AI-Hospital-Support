@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import pool from "@/lib/db";
 
 /**
  * Proxy endpoint to generate a PDF via the reportGenerator service and
@@ -11,6 +12,20 @@ export async function POST(request: NextRequest) {
     if (!reportId) {
       return NextResponse.json(
         { error: "reportId is required" },
+        { status: 400 }
+      );
+    }
+
+    const previewCheck = await pool.query(
+      "SELECT preview FROM reports WHERE id = $1",
+      [reportId]
+    );
+    if (previewCheck.rows.length === 0) {
+      return NextResponse.json({ error: "Report not found" }, { status: 404 });
+    }
+    if (previewCheck.rows[0].preview !== false) {
+      return NextResponse.json(
+        { error: "Report must be finalized before download" },
         { status: 400 }
       );
     }

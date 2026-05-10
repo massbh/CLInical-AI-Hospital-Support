@@ -1,9 +1,10 @@
-'use client';
+"use client";
 import { useState, useEffect } from "react";
 import BookingDoctor from "./BookingDoctor";
 import BookingDateTime from "./BookingDateTime";
 import BookingForm from "./BookingForm";
-import type { Doctor, DoctorSchedule, BookedAppointment } from "@/types";  
+import type { Doctor, DoctorSchedule, BookedAppointment } from "@/types";
+import { getAuthHeaders } from "@/lib/client-auth";
 
 export default function BookingLayout() {
 
@@ -34,8 +35,9 @@ export default function BookingLayout() {
                 const scheduleArrays = await Promise.all(schedulePromisses);
                 setDoctorSchedules(scheduleArrays.flat());
 
-                // fetch all booked appointments
-                const appointmentsResponse = await fetch("/api/appointments");
+                const appointmentsResponse = await fetch("/api/appointments", {
+                    headers: getAuthHeaders(),
+                });
                 const appointmentsData: BookedAppointment[] = await appointmentsResponse.json();
                 setBookedAppointments(appointmentsData);
             } catch (error) {

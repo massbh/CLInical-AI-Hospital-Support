@@ -1,24 +1,21 @@
-import { NextRequest, NextResponse } from "next/server";  
-import pool from "@/lib/db";  
-import { cookies } from "next/headers";  
+import { NextRequest, NextResponse } from "next/server";
+import pool from "@/lib/db";
+import { requireDoctor } from "@/lib/db-auth";  
   
 // return booked appointments with patient names for the logged-in doctor's calendar view  
-export async function GET(request: NextRequest) {  
-  const cookieStore = await cookies();  
-    const userId = cookieStore.get("userId")?.value;  
-
-    if (!userId) {  
-        return NextResponse.json({ error: "Not logged in" }, { status: 401 });  
-    } 
+export async function GET(_request: NextRequest) {
+    const authResult = await requireDoctor(_request);
+    if (authResult instanceof NextResponse) return authResult;
+    const { user } = authResult; 
 
 
   
    try {  
-        // find the doctor linked to this account  
-        const doctorResult = await pool.query(  
-            `SELECT id FROM doctors WHERE account_id = $1`,  
-            [userId]  
-        );  
+         // find the doctor linked to this account
+         const doctorResult = await pool.query(
+             `SELECT id FROM doctors WHERE account_id = $1`,
+             [user.id]
+         );
   
         if (doctorResult.rows.length === 0) {  
             return NextResponse.json({ error: "No doctor profile found for this account" }, { status: 404 });  
@@ -29,6 +26,7 @@ export async function GET(request: NextRequest) {
         // fetch only this doctor's appointments  
         const result = await pool.query(  
             `SELECT  
+                ba.id,  
                 ba.date::text,  
                 ba.time,  
                 a.name AS "patientName"  

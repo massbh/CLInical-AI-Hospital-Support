@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
+import { requireDoctor } from "@/lib/db-auth";
 
-// fetch suggestions for a specific appointment
 export async function GET(request: NextRequest) {
-  const appointmentId = new URL(request.url).searchParams.get("appointmentId");
+    const authResult = await requireDoctor(request);
+    if (authResult instanceof NextResponse) return authResult;
+
+    const appointmentId = new URL(request.url).searchParams.get("appointmentId");
 
   if (!appointmentId) {
     return NextResponse.json(
@@ -29,7 +32,10 @@ export async function GET(request: NextRequest) {
 
 // create a new suggestion for an appointment
 export async function POST(request: NextRequest) {
-  try {
+    const authResult = await requireDoctor(request);
+    if (authResult instanceof NextResponse) return authResult;
+
+    try {
     const { content, source, appointmentId } = await request.json();
 
     if (!content || !appointmentId) {

@@ -1,10 +1,9 @@
 import Image from "next/image";
-import { cookies } from "next/headers";
+import { getAuthUserFromCookies } from "@/lib/db-auth";
 
 export default async function HelloWidget() {
-
-  const cookieStore = await cookies();
-  const doctorName = cookieStore.get("userName")?.value ?? "Doctor";
+  const auth = await getAuthUserFromCookies();
+  const doctorName = auth?.name ?? "Doctor";
 
   return (
     <div className="relative min-h-36 overflow-hidden rounded-xl bg-[#167980] p-6">

@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { callTradLlmSession } from "@/lib/tradllm";
+import { requireDoctor } from "@/lib/db-auth";
 
 export async function POST(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authResult = await requireDoctor(_request);
+  if (authResult instanceof NextResponse) return authResult;
+
   const { id } = await params;
 
   if (!id) {

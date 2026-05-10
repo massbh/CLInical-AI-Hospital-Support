@@ -2,24 +2,23 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
+import { getAuthHeaders } from "@/lib/client-auth";
+import AppointmentDetailModal from "./AppointmentDetailModal";
 
 const APPOINTMENT_DISPLAY_LIMIT = 12;
 
-// color palette to cycle through for appointment entries  
 const COLORS = ["bg-[#2CA6AE]", "bg-green-400", "bg-yellow-400", "bg-pink-400", "bg-gray-400"];
 
-type CalendarAppointment = { time: string; title: string; color: string }; 
+type CalendarAppointment = { id: string; time: string; title: string; color: string };
 
-// format date to match our mock data keys
 function formatDate(date: Date): string {
-  const year = date.getFullYear();  
-  const month = String(date.getMonth() + 1).padStart(2, "0");  
-  const day = String(date.getDate()).padStart(2, "0");  
-  return `${year}-${month}-${day}`;  
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 export default function AppointmentCalendar() {
-  // tracks which day is selected - defaults to today
   const today = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
@@ -27,36 +26,37 @@ export default function AppointmentCalendar() {
   }, []);
   const [selectedDate, setSelectedDate] = useState<Date>(today);
 
-  const [appointments, setAppointments] = useState<Record<string, CalendarAppointment[]>>({});  
+  const [appointments, setAppointments] = useState<Record<string, CalendarAppointment[]>>({});
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
 
-  // loads booked appointments from database
-  useEffect(() => {  
-    async function loadAppointments() {  
-      try {  
-        // FOR LATER: pass the logged-in doctor's ID as ?doctorId=... once session management is implemented later  
-        const response = await fetch("/api/appointments/calendar");  
-        const rows: { date: string; time: string; patientName: string }[] = await response.json();  
-  
-        // group by date and build the display format  
-        const grouped: Record<string, CalendarAppointment[]> = {};  
-        rows.forEach((row, index) => {  
+  useEffect(() => {
+    async function loadAppointments() {
+      try {
+        const response = await fetch("/api/appointments/calendar", {
+          headers: getAuthHeaders(),
+        });
+        const rows: { id: string; date: string; time: string; patientName: string }[] = await response.json();
+
+        const grouped: Record<string, CalendarAppointment[]> = {};
+        rows.forEach((row, index) => {
           if (!grouped[row.date]) {
-            grouped[row.date] = []; 
+            grouped[row.date] = [];
           }
 
-          grouped[row.date].push({  
-            time: row.time,  
-            title: `Appointment with ${row.patientName}`,  
-            color: COLORS[index % COLORS.length],  
-          });  
-        });  
-        setAppointments(grouped);  
-      } catch (error) {  
-        console.error("Failed to load appointments:", error);  
-      }  
-    }  
-    loadAppointments();  
-  }, []);  // the empty [] means it only runs once after the first page render
+          grouped[row.date].push({
+            id: row.id,
+            time: row.time,
+            title: `Appointment with ${row.patientName}`,
+            color: COLORS[index % COLORS.length],
+          });
+        });
+        setAppointments(grouped);
+      } catch (error) {
+        console.error("Failed to load appointments:", error);
+      }
+    }
+    loadAppointments();
+  }, []);
 
   const calendarModifiers = useMemo(() => ({ today }), [today]);
   const calendarModifiersStyles = useMemo(
@@ -69,11 +69,9 @@ export default function AppointmentCalendar() {
     []
   );
 
-  // get appointments for the selected day
   const selectedKey = formatDate(selectedDate);
   const dayAppointments = appointments[selectedKey] || [];
 
-  // format the selected date for the list header
   const dateLabel = selectedDate.toLocaleDateString("en-GB", {
     month: "long",
     day: "numeric",
@@ -82,7 +80,6 @@ export default function AppointmentCalendar() {
   return (
     <div className="flex gap-4 h-full w-full overflow-hidden">
 
-      {/* appointment list for selected day */}
       <div className="flex flex-col w-[40%] shrink-0 overflow-y-auto pr-2">
         <h3 className="text-[#2CA6AE] font-bold text-base tracking-widest mb-6">
           {dateLabel}
@@ -95,6 +92,7 @@ export default function AppointmentCalendar() {
             {dayAppointments.slice(0, APPOINTMENT_DISPLAY_LIMIT).map((appointment, index) => (
               <div
                 key={index}
+                onClick={() => setSelectedAppointmentId(appointment.id)}
                 className="flex items-center gap-3 py-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 rounded-lg px-2 transition-colors group"
               >
                 <span className="text-[#2CA6AE] text-base font-medium w-20 shrink-0">
@@ -110,10 +108,8 @@ export default function AppointmentCalendar() {
         )}
       </div>
 
-      {/* divider */}
       <div className="w-1.5 bg-[#2CA6AE] self-stretch mx-4 shrink-0 rounded-full" />
 
-      {/* calendar widget */}
       <div className="bg-[#2CA6AE] rounded-3xl p-4 flex-1 overflow-hidden flex items-center justify-center">
         <div className="bg-white rounded-2xl p-4 w-full h-full overflow-hidden [&_button[data-day]]:aspect-auto [&_button[data-day]]:w-16 [&_button[data-day]]:mx-auto [&_button[data-day]]:py-2.5">
           <Calendar
@@ -133,6 +129,12 @@ export default function AppointmentCalendar() {
           />
         </div>
       </div>
+
+      <AppointmentDetailModal
+        isOpen={selectedAppointmentId !== null}
+        onClose={() => setSelectedAppointmentId(null)}
+        appointmentId={selectedAppointmentId}
+      />
 
     </div>
   );

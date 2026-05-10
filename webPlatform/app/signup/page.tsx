@@ -1,17 +1,47 @@
 "use client";
 
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import SignUpForm from "@/components/signupPage/SignUpForm";
-import { useState } from "react";  
-import { useRouter } from "next/navigation";  
-import type { SignUpFormData } from "@/types";  
+import type { SignUpFormData } from "@/types";
 
 export default function SignUpPage() {
     const router = useRouter();
-    const [error, setError] = useState<string | null>(null);  
+    const [error, setError] = useState<string | null>(null);
+    const [redirectTarget, setRedirectTarget] = useState<string | null>(null);
+    const initialized = useRef(false);
+
+    useEffect(() => {
+        if (initialized.current) return;
+        initialized.current = true;
+
+        const token = localStorage.getItem("auth_token");
+        if (!token) return;
+
+        fetch("/api/auth/me", {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+            .then((res) => (res.ok ? res.json() : null))
+            .then((user) => {
+                if (user) {
+                    setRedirectTarget(
+                        user.accountType === "doctor"
+                            ? "/appointments"
+                            : "/appointments/new"
+                    );
+                }
+            })
+            .catch(() => {});
+    }, []);
+
+    useEffect(() => {
+        if (redirectTarget) {
+            router.push(redirectTarget);
+        }
+    }, [redirectTarget, router]);
 
     async function handleSignUp(data: SignUpFormData) {
-        // validation client-side before hitting the api
         if (data.password !== data.repeatPassword) {
             setError("Passwords do not match");
             return;
@@ -34,21 +64,23 @@ export default function SignUpPage() {
                     password: data.password,
                     accountType: data.accountType,
                 }),
-            })
+            });
 
             if (response.ok) {
-                // account created. Redirect to login
                 router.push("/login");
                 return;
             }
 
-            // handle error responses from API
             const result = await response.json();
             setError(result.error || "Something went wrong");
 
         } catch {
             setError("Network error");
         }
+    }
+
+    if (redirectTarget) {
+        return null;
     }
 
     return (
@@ -60,13 +92,13 @@ export default function SignUpPage() {
                 </Link>
             </p>
 
-            {error && (  
-                <p className="w-full max-w-[400px] rounded-lg bg-red-50 px-4 py-2 text-center text-sm text-red-600">  
-                {error}  
-                </p>  
-            )} 
+            {error && (
+                <p className="w-full max-w-[400px] rounded-lg bg-red-50 px-4 py-2 text-center text-sm text-red-600">
+                    {error}
+                </p>
+            )}
 
-            <SignUpForm onSubmit={handleSignUp}/>
+            <SignUpForm onSubmit={handleSignUp} />
         </main>
     );
 }

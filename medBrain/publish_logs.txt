@@ -6,3 +6,8 @@ For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/St
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
 2026-05-10 14:05:40 | kind=Note | appointment_id=f1b5aa1b-c13e-439b-a425-a82f2da9a974 | error=Client error '401 Unauthorized' for url 'http://localhost:3000/api/notes'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+2026-05-10 14:33:59 | kind=Suggestion | appointment_id=5e8e971f-f5ad-4551-8bd4-cb560819ae18 | error=Server error '500 Internal Server Error' for url 'http://localhost:3000/api/suggestions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+2026-05-10 15:00:52 | kind=Suggestion | appointment_id=76259fbf-83f8-446e-bdc7-eb400972600f | error=HTTP 500 http://localhost:3000/api/suggestions body='{"error":"Internal server error","detail":"column \\"content\\" of relation \\"suggestions\\" does not exist"}'
+2026-05-10 15:01:26 | kind=Suggestion | appointment_id=76259fbf-83f8-446e-bdc7-eb400972600f | error=HTTP 500 http://localhost:3000/api/suggestions body='{"error":"Internal server error","detail":"column \\"content\\" of relation \\"suggestions\\" does not exist"}'
+2026-05-10 15:01:53 | kind=Suggestion | appointment_id=76259fbf-83f8-446e-bdc7-eb400972600f | error=HTTP 500 http://localhost:3000/api/suggestions body='{"error":"Internal server error","detail":"column \\"content\\" of relation \\"suggestions\\" does not exist"}'

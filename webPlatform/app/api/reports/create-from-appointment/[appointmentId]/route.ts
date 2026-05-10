@@ -68,40 +68,32 @@ export async function POST(
 
     const reportId = reportResult.rows[0].id;
 
-    // Create sections from notes
-    const sectionTitles = ["Assessment", "Vital Signs", "Diagnosis", "Recommendations"];
-    let sectionIndex = 0;
+    // Always create the same fixed schema so every report has the full
+    // structure and Assessment & Plan is the final section. Notes are
+    // concatenated into the Vital Signs / Physical Examination sections as
+    // raw context for the doctor to edit; the clinical sections start empty.
+    const notesText = notes.map((n) => n.content).join("\n\n");
+    const sectionSchema: { title: string; content: string }[] = [
+      { title: "Vital Signs", content: notesText },
+      { title: "Physical Examination", content: "" },
+      { title: "Diagnosis", content: "" },
+      { title: "Recommendations", content: "" },
+      { title: "Assessment & Plan", content: "" },
+    ];
 
-    for (const note of notes) {
-      const sectionTitle =
-        sectionTitles[sectionIndex % sectionTitles.length] ||
-        `Note ${sectionIndex + 1}`;
-
+    for (const section of sectionSchema) {
       await pool.query(
         `INSERT INTO report_sections (report_id, title, content, status)
          VALUES ($1, $2, $3, $4)`,
-        [reportId, sectionTitle, note.content, "pending"]
+        [reportId, section.title, section.content, "pending"]
       );
-
-      sectionIndex++;
-    }
-
-    // If no notes, create placeholder sections
-    if (notes.length === 0) {
-      for (const title of sectionTitles) {
-        await pool.query(
-          `INSERT INTO report_sections (report_id, title, content, status)
-           VALUES ($1, $2, $3, $4)`,
-          [reportId, title, "", "pending"]
-        );
-      }
     }
 
     return NextResponse.json({
       success: true,
       message: "Report created from appointment notes",
       report_id: reportId,
-      sections_created: Math.max(notes.length, sectionTitles.length),
+      sections_created: sectionSchema.length,
       patient_name,
       patient_surname,
       doctor_name,

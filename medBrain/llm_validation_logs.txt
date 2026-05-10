@@ -33,3 +33,43 @@ pneumonia.
 2026-05-10 14:22:32 | Attempt: 3 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
 2026-05-10 14:22:56 | Attempt: 1 | Valid: True | Error: None | Msg: The absence of time frame raises concern for a severe, potentially life-threatening cause (e.g., cerebral aneurysm rupture) given the urgency requested. Encourage seeking immediate attention from a neurologist or neurosurgeon. This is not a routine situation.
 2026-05-10 14:23:26 | Attempt: 1 | Valid: True | Error: None | Msg: The patient's sudden onset headache could be due to an intracerebral haemorrhage or subarachnoid haemorrhage. However, these conditions are relatively uncommon and other causes of acute severe headache must also be considered before jumping directly to life-threatening possibilities. The patient should be examined closely for any signs of raised intracranial pressure and their neurological status monitored closely over the next few hours. An urgent CT scan of the brain would confirm or refute the concern.
+2026-05-10 14:33:59 | Attempt: 1 | Valid: True | Error: None | Msg: This presentation warrants an immediate MRI of the brain to rule out hemorrhage or other intracranial pathology. If such a finding is identified, the next steps would be urgent intervention depending on the nature of the abnormality.
+2026-05-10 14:34:56 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:35:04 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:35:09 | Attempt: 3 | Valid: True | Error: None | Msg: The patient reports current suicidal ideation lasting six months, with no prior history. No specific precipitant identified. Family history positive for substance abuse and depression.
+2026-05-10 14:35:31 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:35:33 | Attempt: 2 | Valid: True | Error: None | Msg: Patient reports persistent feeling of sadness for past two months.
+2026-05-10 14:36:07 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:36:13 | Attempt: 2 | Valid: True | Error: None | Msg: Patient reports persistent side effects from lisinopril, including dizziness, blurred vision, and sweating.
+2026-05-10 14:46:16 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:46:19 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:46:23 | Attempt: 3 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:46:44 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports sudden-onset fever, sore throat, and severe headache. No
+    known cause found in medical history or review of systems. Family history
+    positive for several cancers.
+2026-05-10 14:47:50 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:47:59 | Attempt: 2 | Valid: True | Error: None | Msg: Patient presents with traumatic injury from fall down stairs and severe cognitive impairment consistent with advanced dementia, requiring immediate medical evaluation and support for potential underlying conditions exacerbated by fall.
+2026-05-10 14:48:31 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:48:38 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:48:40 | Attempt: 3 | Valid: True | Error: None | Msg: Patient reports persistent anxiety about possible cancer diagnosis.
+2026-05-10 14:49:06 | Attempt: 1 | Valid: True | Error: None | Msg: The patient reports chest pain and dyspnea, which raises concerns about a cardiac event. While the details could indicate several other conditions, a life-threatening condition is a possibility and immediate consultation with a specialist might be warranted. If this diagnosis were confirmed, an intervention would likely follow.
+2026-05-10 14:49:35 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:49:43 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:49:53 | Attempt: 3 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:50:29 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:50:34 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:50:39 | Attempt: 3 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:00:52 | Attempt: 1 | Valid: True | Error: None | Msg: While this presentation of recurrent headaches could be due to many causes, it's important to consider the potential for malignancy, especially with any new symptoms or unexplained weight loss. Consider a full medical history, physical examination, and appropriate imaging studies such as an MRI or CT scan. If any malignant findings are revealed, refer the patient on to a specialist. However, if no malignancy is found, continue with other potential diagnoses and management options. (Clinical context: The patient has a family history of cancer, which should be considered in the assessment.)
+2026-05-10 15:01:26 | Attempt: 1 | Valid: True | Error: None | Msg: This presentation is concerning and highly unlikely to be benign. Given the concern for a serious intracranial mass, it's important to proceed urgently given this high-risk scenario. Consider immediate MRI of the head with contrast if possible. If you have access to an otoscope, use it to evaluate the mastoid area and assess the possibility of mastoiditis or other complications. Anesthesia consultation should also be considered. This case is a medical emergency, so please do not hesitate to contact radiology or surgical specialists for consultation and assistance.
+2026-05-10 15:01:53 | Attempt: 1 | Valid: True | Error: None | Msg: This presentation could be due to orthostatic intolerance, likely secondary to chronic illness or medication side effects. Consider referring the patient for specialist evaluation and potential treatments, such as alterations to their lifestyle and possibly medication adjustment.
+2026-05-10 15:05:25 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:05:37 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:05:54 | Attempt: 3 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:08:01 | Attempt: 1 | Valid: True | Error: None | Msg: The patient's symptoms suggest an acute coronary syndrome. An ECG and serial troponins should be ordered, and cardiac monitoring should be considered pending evaluation. The clinician should investigate further and initiate appropriate therapy.
+2026-05-10 15:08:23 | Attempt: 1 | Valid: True | Error: None | Msg: Vitals stable: BP 108/72, HR 64, afebrile; no acute complaints on review of systems.
+2026-05-10 15:08:55 | Attempt: 1 | Valid: True | Error: None | Msg: This presentation suggests Meniere's disease, which often causes
+persistent vertigo. Given the patient's history and symptoms, consider a CT
+of the inner ear to confirm diagnosis. This will help guide management, including
+potential referral for further evaluation. If the CT is normal, consider
+referring the patient to a specialist for further evaluation and potential
+management options. [Clinical summary with tag]

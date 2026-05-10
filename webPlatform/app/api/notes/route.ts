@@ -52,9 +52,13 @@ export async function POST(request: NextRequest) {
       [content, source || null, appointmentId]  
     );  
   
-    return NextResponse.json(result.rows[0], { status: 201 });  
-  } catch (error) {  
-    console.error("Error creating note:", error);  
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });  
-  }  
+    return NextResponse.json(result.rows[0], { status: 201 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Error creating note:", error);
+    return NextResponse.json(
+      { error: "Internal server error", detail: message },
+      { status: 500 }
+    );
+  }
 }

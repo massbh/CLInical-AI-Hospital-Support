@@ -1,5 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -7,7 +8,10 @@ from fastapi import FastAPI
 from app import scheduler
 from app.routes import router
 
-load_dotenv()
+# Prefer .env.local (gitignored, real creds) over .env (template-only).
+_env_local = Path(__file__).resolve().parent.parent / ".env.local"
+_env = Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(dotenv_path=_env_local if _env_local.exists() else _env)
 
 logging.basicConfig(
     level=logging.INFO,

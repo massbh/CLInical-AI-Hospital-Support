@@ -292,7 +292,7 @@ do_start() {
     [ ${#missing[@]} -gt 0 ] && { err "Install: ${missing[*]}"; return 1; }
 
     local env_files=("tradLlm/.env" "medBrain/.env" "webPlatform/.env.local")
-    [ "$NO_EMAIL" -eq 0 ] && env_files+=("emailService/.env")
+    [ "$NO_EMAIL" -eq 0 ] && env_files+=("emailService/.env.local")
     for e in "${env_files[@]}"; do
         if [ -f "$REPO_ROOT/$e" ]; then ok "$e"; else err "missing $e"; missing+=("$e"); fi
     done

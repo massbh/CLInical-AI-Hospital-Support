@@ -13,9 +13,10 @@ export async function getAuthUser(
   request: NextRequest
 ): Promise<AuthUser | null> {
   const authHeader = request.headers.get("authorization");
-  const token = authHeader?.startsWith("Bearer ")
+  const headerToken = authHeader?.startsWith("Bearer ")
     ? authHeader.slice(7)
     : null;
+  const token = headerToken ?? request.cookies.get("auth_token")?.value ?? null;
 
   if (!token) return null;
 

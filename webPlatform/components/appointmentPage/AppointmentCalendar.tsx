@@ -34,6 +34,7 @@ export default function AppointmentCalendar() {
       try {
         const response = await fetch("/api/appointments/calendar", {
           headers: getAuthHeaders(),
+          cache: "no-store",
         });
         const rows: { id: string; date: string; time: string; patientName: string }[] = await response.json();
 

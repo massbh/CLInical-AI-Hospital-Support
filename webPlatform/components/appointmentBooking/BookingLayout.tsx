@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import BookingDoctor from "./BookingDoctor";
 import BookingDateTime from "./BookingDateTime";
 import BookingForm from "./BookingForm";
@@ -18,6 +18,14 @@ export default function BookingLayout() {
     const [doctorSchedules, setDoctorSchedules] = useState<DoctorSchedule[]>([]);  
     const [bookedAppointments, setBookedAppointments] = useState<BookedAppointment[]>([]);  
 
+    const loadBookedAppointments = useCallback(async () => {
+        const appointmentsResponse = await fetch("/api/appointments", {
+            headers: getAuthHeaders(),
+            cache: "no-store",
+        });
+        const appointmentsData: BookedAppointment[] = await appointmentsResponse.json();
+        setBookedAppointments(appointmentsData);
+    }, []);
 
     // fetch doctors, schedules, and booked appointments
     useEffect(() => {
@@ -35,24 +43,20 @@ export default function BookingLayout() {
                 const scheduleArrays = await Promise.all(schedulePromisses);
                 setDoctorSchedules(scheduleArrays.flat());
 
-                const appointmentsResponse = await fetch("/api/appointments", {
-                    headers: getAuthHeaders(),
-                });
-                const appointmentsData: BookedAppointment[] = await appointmentsResponse.json();
-                setBookedAppointments(appointmentsData);
+                await loadBookedAppointments();
             } catch (error) {
                 console.error("Failed to load booking data:", error);  
             }
         }
         loadData();  
-    }, []);     // the empty [] means it only runs once after the first page render
+    }, [loadBookedAppointments]);
 
 
 
 
 
     return (
-    <div className="grid h-full grid-cols-[320px_minmax(0,1fr)_380px] gap-4 p-4">
+    <div className="grid min-h-0 flex-1 grid-cols-[320px_minmax(0,1fr)_380px] gap-4 p-4">
         <section className="min-w-0 rounded-xl border border-gray-100 bg-white shadow-sm">
             <BookingDoctor
                 selectedDoctor={selectedDoctor}
@@ -82,6 +86,21 @@ export default function BookingLayout() {
                 selectedTime={selectedTime}
                 selectedDoctor={selectedDoctor}
                 doctors={doctors}
+                onBookingCreated={(appointment) => {
+                    setBookedAppointments((current) => [
+                        ...current.filter(
+                            (item) =>
+                                !(
+                                    item.doctorId === appointment.doctorId &&
+                                    item.date === appointment.date &&
+                                    item.time === appointment.time
+                                )
+                        ),
+                        appointment,
+                    ]);
+                    setSelectedTime(null);
+                    void loadBookedAppointments();
+                }}
             />
         </section>
     </div>

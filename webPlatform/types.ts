@@ -82,6 +82,7 @@ export type BookingFormProps = {
   selectedTime: string | null;
   selectedDoctor: string;
   doctors: Doctor[];
+  onBookingCreated: (appointment: BookedAppointment) => void;
 };
 
 export type TimeSlotButtonProps = {

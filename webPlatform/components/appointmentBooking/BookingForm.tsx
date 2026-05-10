@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { BookingFormProps as Props } from "@/types";
 import { getAuthHeaders } from "@/lib/client-auth";
 
-export default function BookingForm({selectedDate, selectedTime, selectedDoctor, doctors}: Props) {
+export default function BookingForm({selectedDate, selectedTime, selectedDoctor, doctors, onBookingCreated}: Props) {
     
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -62,12 +62,18 @@ export default function BookingForm({selectedDate, selectedTime, selectedDoctor,
                 }),  
             });  
   
-            if (response.ok) {  
+            const result = await response.json();
+
+            if (response.ok) {
+                onBookingCreated({
+                    doctorId: result.doctorId,
+                    date: result.date,
+                    time: result.time,
+                });
                 setSubmitSuccess(true);  
                 return;  
             }  
   
-            const result = await response.json();  
             setSubmitError(result.error || "Failed to book appointment");  
         } catch {  
             setSubmitError("Network error");  

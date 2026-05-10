@@ -4,8 +4,11 @@ import { useState } from "react";
 import { User, Mail, Lock } from "lucide-react";
 import type { AccountType, SignUpFormData, SignUpFormProps } from "@/types";
 
-export default function SignUpForm({ onSubmit }: SignUpFormProps) {
-  const [accountType, setAccountType] = useState<AccountType>("patient");
+export default function SignUpForm({ onSubmit, accountType: propAccountType, setAccountType: propSetAccountType }: SignUpFormProps) {
+  const [localAccountType, setLocalAccountType] = useState<AccountType>("patient");
+  
+  const accountType = propAccountType ?? localAccountType;
+  const setAccountType = propSetAccountType ?? setLocalAccountType;
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

@@ -185,6 +185,8 @@ export type SignUpFormData = {
 
 export type SignUpFormProps = {
   onSubmit?: (data: SignUpFormData) => void;
+  accountType?: AccountType;
+  setAccountType?: (type: AccountType) => void;
 };
 
 // ─── Log In ───────────────────────────────────────────────────────────────────

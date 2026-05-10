@@ -2,16 +2,18 @@
 
 import asyncio
 import logging
+import os
 from contextlib import asynccontextmanager
 from typing import Optional
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI, HTTPException, status, Depends
-from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel
 
 from app.config import config
-from app.pdf_generator import process_all_pending_reports
+from app.pdf_generator import process_all_pending_reports, process_report
 from app.auth import verify_api_key
 
 # Configure logging
@@ -42,6 +44,13 @@ class SchedulerStatusResponse(BaseModel):
     scheduler_status: str
     next_run_time: Optional[str] = None
     interval_seconds: int
+
+class GeneratePdfResponse(BaseModel):
+    """PDF generation response."""
+    success: bool
+    message: str
+    report_id: str
+    pdf_path: Optional[str] = None
 
 # Global scheduler instance
 scheduler: BackgroundScheduler | None = None
@@ -116,6 +125,15 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Add CORS middleware to allow frontend requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.get("/health", response_model=HealthResponse, tags=["health"])
 async def health():
@@ -152,6 +170,60 @@ async def trigger_report_processing(
         )
 
 
+@app.post("/generate-pdf/{report_id}", response_model=GeneratePdfResponse, tags=["reports"])
+async def generate_pdf_test(
+    report_id: str,
+    _: str = Depends(verify_api_key),
+):
+    """Generate PDF for a specific report. Requires API key. 
+    
+    Forces the report to process immediately regardless of preview flag.
+    Useful for testing the PDF generation with specific reports.
+    """
+    try:
+        from app.pdf_generator import update_report_preview_flag_db, fetch_report
+        
+        logger.info(f"Manual PDF generation requested for report {report_id}")
+        
+        # Verify report exists
+        report = fetch_report(report_id)
+        if not report:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Report {report_id} not found",
+            )
+        
+        # Force preview flag to TRUE to trigger PDF generation
+        update_report_preview_flag_db(report_id, True)
+        
+        # Process the report
+        success = process_report(report_id, output_dir=config.PDF_OUTPUT_DIR)
+        
+        if success:
+            pdf_path = f"{config.PDF_OUTPUT_DIR}report_{report_id}.pdf"
+            logger.info(f"PDF generated successfully for report {report_id}")
+            return GeneratePdfResponse(
+                success=True,
+                message=f"PDF generated successfully for report {report_id}",
+                report_id=report_id,
+                pdf_path=pdf_path,
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Failed to generate PDF for report {report_id}",
+            )
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating PDF for report {report_id}: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error generating PDF: {str(e)}",
+        )
+
+
 @app.get("/scheduler/status", response_model=SchedulerStatusResponse, tags=["scheduler"])
 async def get_scheduler_status(
     _: str = Depends(verify_api_key),
@@ -170,6 +242,39 @@ async def get_scheduler_status(
         next_run_time=str(next_run.next_run_time) if next_run and next_run.next_run_time else None,
         interval_seconds=config.SCHEDULER_INTERVAL_SECONDS,
     )
+
+
+@app.get("/download-pdf/{report_id}", tags=["reports"])
+async def download_pdf(
+    report_id: str,
+    _: str = Depends(verify_api_key),
+):
+    """Download a generated PDF file. Requires API key."""
+    try:
+        pdf_path = os.path.join(config.PDF_OUTPUT_DIR, f"report_{report_id}.pdf")
+        
+        # Check if file exists
+        if not os.path.exists(pdf_path):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"PDF not found for report {report_id}. Please generate it first.",
+            )
+        
+        # Return the PDF file
+        return FileResponse(
+            path=pdf_path,
+            media_type="application/pdf",
+            filename=f"report_{report_id}.pdf",
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error downloading PDF for report {report_id}: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error downloading PDF: {str(e)}",
+        )
 
 
 if __name__ == "__main__":

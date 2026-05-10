@@ -218,10 +218,16 @@ def generate_formatted_pdf(sections_data: dict, report_data: dict, output_file: 
         )
         
         # Report header
-        patient_name = f"{report_data.get('patient_name', '')} {report_data.get('patient_surname', '')}"
+        patient_name = f"{report_data.get('patient_name', 'Unknown')} {report_data.get('patient_surname', 'Patient')}"
         doctor_name = report_data.get('doctor_name', 'Unknown Doctor')
         report_date = report_data.get('date', 'N/A')
         report_title = report_data.get('title', 'Medical Report')
+        
+        # Sanitize strings to prevent encoding issues
+        patient_name = str(patient_name) if patient_name else "Unknown Patient"
+        doctor_name = str(doctor_name) if doctor_name else "Unknown Doctor"
+        report_date = str(report_date) if report_date else "N/A"
+        report_title = str(report_title) if report_title else "Medical Report"
         
         story.append(Paragraph(report_title, title_style))
         story.append(Spacer(1, 0.1*inch))
@@ -230,7 +236,7 @@ def generate_formatted_pdf(sections_data: dict, report_data: dict, output_file: 
         info_data = [
             ['Patient:', patient_name],
             ['Doctor:', doctor_name],
-            ['Date:', str(report_date)]
+            ['Date:', report_date]
         ]
         info_table = Table(info_data, colWidths=[1.5*inch, 4*inch])
         info_table.setStyle(TableStyle([
@@ -244,33 +250,41 @@ def generate_formatted_pdf(sections_data: dict, report_data: dict, output_file: 
         
         # 1. Assessment Section (First)
         if sections_data.get('assessment'):
-            story.append(Paragraph("1. Assessment", heading_style))
-            assessment_content = sections_data['assessment'].get('content', '')
-            story.append(Paragraph(assessment_content, body_style))
-            story.append(Spacer(1, 0.1*inch))
+            assessment_content = str(sections_data['assessment'].get('content', '')).strip()
+            if assessment_content:
+                story.append(Paragraph("1. Assessment", heading_style))
+                story.append(Paragraph(assessment_content, body_style))
+                story.append(Spacer(1, 0.1*inch))
         
         # 2. Diagnosis Section (Second)
         if sections_data.get('diagnosis'):
-            story.append(Paragraph("2. Diagnosis", heading_style))
-            diagnosis_content = sections_data['diagnosis'].get('content', '')
-            story.append(Paragraph(diagnosis_content, body_style))
-            story.append(Spacer(1, 0.1*inch))
+            diagnosis_content = str(sections_data['diagnosis'].get('content', '')).strip()
+            if diagnosis_content:
+                story.append(Paragraph("2. Diagnosis", heading_style))
+                story.append(Paragraph(diagnosis_content, body_style))
+                story.append(Spacer(1, 0.1*inch))
         
         # 3. Prescription Section (Last)
         if sections_data.get('prescription'):
-            story.append(Paragraph("3. Prescription & Recommendations", heading_style))
-            prescription_content = sections_data['prescription'].get('content', '')
-            story.append(Paragraph(prescription_content, body_style))
-            story.append(Spacer(1, 0.1*inch))
+            prescription_content = str(sections_data['prescription'].get('content', '')).strip()
+            if prescription_content:
+                story.append(Paragraph("3. Prescription & Recommendations", heading_style))
+                story.append(Paragraph(prescription_content, body_style))
+                story.append(Spacer(1, 0.1*inch))
         
         # 4. Other sections (if any)
         if sections_data.get('other'):
             for idx, section in enumerate(sections_data['other'], 4):
-                section_title = section.get('title', f'Section {idx}')
-                section_content = section.get('content', '')
-                story.append(Paragraph(f"{idx}. {section_title}", heading_style))
-                story.append(Paragraph(section_content, body_style))
-                story.append(Spacer(1, 0.1*inch))
+                section_title = str(section.get('title', f'Section {idx}')).strip()
+                section_content = str(section.get('content', '')).strip()
+                if section_content:
+                    story.append(Paragraph(f"{idx}. {section_title}", heading_style))
+                    story.append(Paragraph(section_content, body_style))
+                    story.append(Spacer(1, 0.1*inch))
+        
+        # Ensure story is not empty
+        if len(story) <= 4:  # Just headers, no content
+            story.append(Paragraph("No content available for this report.", body_style))
         
         # Build PDF
         doc.build(story)

@@ -1,6 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 
+const EMAIL_SERVICE_URL =
+  process.env.EMAIL_SERVICE_URL ?? "http://localhost:8003";
+const EMAIL_SERVICE_API_KEY = process.env.EMAIL_SERVICE_API_KEY ?? "";
+
+type EmailResult = {
+  sent: boolean;
+  recipient?: string;
+  error?: string;
+};
+
+async function sendFinalizedReportEmail(reportId: string): Promise<EmailResult> {
+  try {
+    const response = await fetch(
+      `${EMAIL_SERVICE_URL.replace(/\/$/, "")}/send-report`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-Key": EMAIL_SERVICE_API_KEY,
+        },
+        body: JSON.stringify({ report_id: reportId }),
+      }
+    );
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const detail =
+        data && typeof data === "object" && "detail" in data
+          ? String(data.detail)
+          : `Email service returned ${response.status}`;
+      return { sent: false, error: detail };
+    }
+
+    const recipient =
+      data && typeof data === "object" && "recipient" in data
+        ? String(data.recipient)
+        : undefined;
+
+    return { sent: true, recipient };
+  } catch (error) {
+    return {
+      sent: false,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
 /**
  * Finalize a report and stream the generated PDF back as an attachment.
  * All sections must be accepted before this can succeed.
@@ -60,11 +107,24 @@ export async function POST(
     }
 
     const buf = await response.arrayBuffer();
+    const emailResult = await sendFinalizedReportEmail(reportId);
+    if (!emailResult.sent) {
+      console.error(
+        `Report ${reportId} finalized but email was not sent:`,
+        emailResult.error
+      );
+    }
+
     return new NextResponse(buf, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="report-${reportId}.pdf"`,
+        "X-Email-Sent": emailResult.sent ? "true" : "false",
+        ...(emailResult.recipient
+          ? { "X-Email-Recipient": emailResult.recipient }
+          : {}),
+        ...(emailResult.error ? { "X-Email-Error": emailResult.error } : {}),
       },
     });
   } catch (error) {

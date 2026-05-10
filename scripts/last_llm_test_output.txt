@@ -1,0 +1,23 @@
+--- TRANSCRIPT ---
+[2026-05-10 16:05:00] Doctor: Good afternoon. What brought you in today?
+[2026-05-10 16:05:05] Patient: I have had a tight pressure in the middle of my chest for about thirty minutes.
+[2026-05-10 16:05:12] Doctor: Does it stay in the chest or move anywhere else?
+[2026-05-10 16:05:18] Patient: It goes into my left arm and jaw, and I feel short of breath.
+[2026-05-10 16:05:26] Doctor: Any sweating, nausea, dizziness, or fainting?
+[2026-05-10 16:05:33] Patient: I am sweating and a little nauseated. I did not faint.
+[2026-05-10 16:05:40] Doctor: Do you have any heart history or regular medications?
+[2026-05-10 16:05:48] Patient: I have high blood pressure and high cholesterol. I take amlodipine and atorvastatin.
+[2026-05-10 16:05:58] Doctor: Any allergies or recent injury?
+[2026-05-10 16:06:04] Patient: No allergies and no injury. My father had a heart attack in his fifties.
+[2026-05-10 16:06:12] Doctor: I am going to check your vitals now.
+[2026-05-10 16:06:18] Doctor: Blood pressure is 158 over 96, heart rate 104, oxygen saturation 94 percent.
+
+--- TRAD_LLM SUMMARY ---
+Patient reports a new onset of central chest pain radiating to the left arm and jaw for thirty minutes. No other symptoms are reported. She is known to have hypertension and hyperlipidemia. There are no current concerns about cardiovascular disease or allergies. What would be your next step?
+
+--- MEDBRAIN RAW ---
+<Note>Central chest pain with radiation to the left arm and jaw raises concern for acute coronary syndrome. Obtain ECG and serial troponins.</Note>
+<Suggestion>Consider a stress test if the ECG is normal and troponin values are negative, or consider immediate cardiac catheterization if there is any ambiguity about the diagnosis based on the ECG findings alone.</Suggestion>
+
+--- VALIDATION ---
+ValidationResult(is_valid=True, error_type=None, msg='Central chest pain with radiation to the left arm and jaw raises concern for acute coronary syndrome. Obtain ECG and serial troponins.', kind='Note', items=[('Note', 'Central chest pain with radiation to the left arm and jaw raises concern for acute coronary syndrome. Obtain ECG and serial troponins.'), ('Suggestion', 'Consider a stress test if the ECG is normal and troponin values are negative, or consider immediate cardiac catheterization if there is any ambiguity about the diagnosis based on the ECG findings alone.')])

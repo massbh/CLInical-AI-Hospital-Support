@@ -100,12 +100,16 @@ CREATE TABLE reports (
     title VARCHAR(255) NOT NULL,
     content TEXT,
     preview BOOLEAN DEFAULT NULL,
+    email_status VARCHAR(20) DEFAULT NULL CHECK (email_status IN ('ready', 'sent', 'failed')),
+    email_sent_at TIMESTAMP WITH TIME ZONE,
+    email_last_error TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_reports_patient ON reports(patient_id);
 CREATE INDEX idx_reports_doctor ON reports(doctor_id);
 CREATE INDEX idx_reports_date ON reports(date DESC);
+CREATE INDEX idx_reports_email_status ON reports(email_status);
 
 
 
@@ -197,18 +201,53 @@ INSERT INTO booked_appointments (id, doctor_id, patient_id, date, time) VALUES
      'bbbb0000-0000-0000-0000-000000000001'::UUID,  
      'aaaa0000-0000-0000-0000-000000000004'::UUID,  
      CURRENT_DATE, '10:00 am'),  
-    ('cccc0000-0000-0000-0000-000000000003'::UUID,  
-     'bbbb0000-0000-0000-0000-000000000001'::UUID,  
-     'aaaa0000-0000-0000-0000-000000000003'::UUID,  
-     CURRENT_DATE, '3:00 pm'),  
+    ('cccc0000-0000-0000-0000-000000000003'::UUID,
+     'bbbb0000-0000-0000-0000-000000000001'::UUID,
+     'aaaa0000-0000-0000-0000-000000000003'::UUID,
+     CURRENT_DATE, '3:00 pm'),
+    ('cccc0000-0000-0000-0000-000000000006'::UUID,
+     'bbbb0000-0000-0000-0000-000000000001'::UUID,
+     'aaaa0000-0000-0000-0000-000000000003'::UUID,
+     CURRENT_DATE, '2:00 pm'),
     ('cccc0000-0000-0000-0000-000000000004'::UUID,  
      'bbbb0000-0000-0000-0000-000000000001'::UUID,  
      'aaaa0000-0000-0000-0000-000000000003'::UUID,  
      '2026-05-04', '11:00 am'),  
-    ('cccc0000-0000-0000-0000-000000000005'::UUID,  
-     'bbbb0000-0000-0000-0000-000000000002'::UUID,  
-     'aaaa0000-0000-0000-0000-000000000004'::UUID,  
-     '2026-05-05', '1:00 pm');  
+    ('cccc0000-0000-0000-0000-000000000005'::UUID,
+     'bbbb0000-0000-0000-0000-000000000002'::UUID,
+     'aaaa0000-0000-0000-0000-000000000004'::UUID,
+     '2026-05-05', '1:00 pm');
+
+-- Dynamic "now" appointment for Dr. Sarah Johnson + Alice Williams.
+-- Picks the closest work-hour slot to CURRENT_TIME so the conversation page
+-- always shows a usable appointment after a reload-db, regardless of when.
+DO $$
+DECLARE
+    slot VARCHAR(50);
+BEGIN
+    slot := CASE EXTRACT(HOUR FROM CURRENT_TIME)::INT
+        WHEN  9 THEN '9:00 am'
+        WHEN 10 THEN '10:00 am'
+        WHEN 11 THEN '11:00 am'
+        WHEN 12 THEN '12:00 pm'
+        WHEN 13 THEN '1:00 pm'
+        WHEN 14 THEN '2:00 pm'
+        WHEN 15 THEN '3:00 pm'
+        WHEN 16 THEN '4:00 pm'
+        WHEN 17 THEN '5:00 pm'
+        ELSE '9:00 am'  -- before/after work hours: fall back to first slot
+    END;
+
+    INSERT INTO booked_appointments (id, doctor_id, patient_id, date, time)
+    VALUES (
+        'cccc0000-0000-0000-0000-000000000099'::UUID,
+        'bbbb0000-0000-0000-0000-000000000001'::UUID,
+        'aaaa0000-0000-0000-0000-000000000003'::UUID,
+        CURRENT_DATE,
+        slot
+    )
+    ON CONFLICT (doctor_id, date, time) DO NOTHING;
+END $$;
   
 -- Notes (tied to today's 9:00 am appointment for Dr. Sarah Johnson)  
 INSERT INTO notes (content, source, is_new, appointment_id) VALUES  

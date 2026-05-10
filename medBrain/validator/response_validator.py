@@ -21,10 +21,17 @@ def _build_parse_error(parsed: ParsedResponse) -> ValidationResult:
 
 
 def _check_keywords(parsed: ParsedResponse) -> ValidationResult:
-    combined = f"{parsed.type} {parsed.msg}"
+    combined = " ".join(
+        f"{kind} {msg}" for kind, msg in (parsed.items or [(parsed.type, parsed.msg)])
+    )
 
     if not has_bad_keywords(combined):
-        return ValidationResult(is_valid=True, kind=parsed.type, msg=parsed.msg)
+        return ValidationResult(
+            is_valid=True,
+            kind=parsed.type,
+            msg=parsed.msg,
+            items=parsed.items or [(parsed.type, parsed.msg)],
+        )
 
     triggered = get_triggered_keyword(combined)
     return ValidationResult(

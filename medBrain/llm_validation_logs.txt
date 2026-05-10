@@ -19,3 +19,145 @@ pneumonia.
 2026-05-02 16:29:38 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
 2026-05-02 16:29:44 | Attempt: 2 | Valid: True | Error: None | Msg: The patient's age, sex, and medical history suggest potential red flags for a more severe condition. She should be further evaluated with imaging studies to rule out life-threatening causes of headache, such as stroke or meningitis. If her symptoms are confirmed as migraine, lifestyle modifications and potentially preventative medication may be recommended.
 2026-05-02 16:31:22 | Attempt: 1 | Valid: True | Error: None | Msg: Consider reviewing the patient's current medication list and looking for potential drug interactions, including the potential for an overdose from a recent acute event. Order an ECG if the patient has chest pain or shortness of breath to assess cardiac ischemia.
+2026-05-10 13:57:35 | Attempt: 1 | Valid: True | Error: None | Msg: Symptoms persisting for longer than 72 hours can indicate a new episode of ACS, even if chest pain is not prominent. Clinicians should consider this possibility when evaluating patients presenting with these symptoms. The patient's ECG and troponin levels should be reviewed.
+2026-05-10 13:58:08 | Attempt: 1 | Valid: True | Error: None | Msg: The patient's chest pain and shortness of breath suggest the possibility of acute coronary syndrome (ACS). An ECG and troponin levels should be reviewed. Patient-reported chest pain combined with systemic symptoms such as shortness of breath, weakness, or fatigue should be considered urgent. If the patient is unable to get to a hospital quickly, consider calling an ambulance.
+2026-05-10 14:05:07 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:05:20 | Attempt: 2 | Valid: True | Error: None | Msg: Patient's history suggests that they may have Chronic Obstructive Pulmonary Disease (COPD). Given the presentation, COPD could be a potential diagnosis. However, this should be confirmed with spirometry. If it is indeed COPD, then management would involve a combination of bronchodilators and possibly corticosteroids. Chronic diseases such as COPD can impact a patient's quality of life and longevity if left untreated.
+2026-05-10 14:05:39 | Attempt: 1 | Valid: True | Error: None | Msg: The patient has been diagnosed with breast cancer, and it appears to be localized. She is currently undergoing chemotherapy.
+2026-05-10 14:06:00 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:06:07 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:11:49 | Attempt: 1 | Valid: True | Error: None | Msg: The management plan will depend on various factors, including the type and stage of cancer, comorbidities, and patient preferences. The clinician should provide guidance based on established treatment protocols. Additional tests or consultations may be necessary depending on the specific case.
+2026-05-10 14:12:46 | Attempt: 1 | Valid: True | Error: None | Msg: The patient's history suggests potential signs of a TIA (Transient Ischaemic Attack) or Stroke. An urgent neurology consultation should be considered to evaluate further.
+2026-05-10 14:22:08 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:22:18 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:22:32 | Attempt: 3 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:22:56 | Attempt: 1 | Valid: True | Error: None | Msg: The absence of time frame raises concern for a severe, potentially life-threatening cause (e.g., cerebral aneurysm rupture) given the urgency requested. Encourage seeking immediate attention from a neurologist or neurosurgeon. This is not a routine situation.
+2026-05-10 14:23:26 | Attempt: 1 | Valid: True | Error: None | Msg: The patient's sudden onset headache could be due to an intracerebral haemorrhage or subarachnoid haemorrhage. However, these conditions are relatively uncommon and other causes of acute severe headache must also be considered before jumping directly to life-threatening possibilities. The patient should be examined closely for any signs of raised intracranial pressure and their neurological status monitored closely over the next few hours. An urgent CT scan of the brain would confirm or refute the concern.
+2026-05-10 14:33:59 | Attempt: 1 | Valid: True | Error: None | Msg: This presentation warrants an immediate MRI of the brain to rule out hemorrhage or other intracranial pathology. If such a finding is identified, the next steps would be urgent intervention depending on the nature of the abnormality.
+2026-05-10 14:34:56 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:35:04 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:35:09 | Attempt: 3 | Valid: True | Error: None | Msg: The patient reports current suicidal ideation lasting six months, with no prior history. No specific precipitant identified. Family history positive for substance abuse and depression.
+2026-05-10 14:35:31 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:35:33 | Attempt: 2 | Valid: True | Error: None | Msg: Patient reports persistent feeling of sadness for past two months.
+2026-05-10 14:36:07 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:36:13 | Attempt: 2 | Valid: True | Error: None | Msg: Patient reports persistent side effects from lisinopril, including dizziness, blurred vision, and sweating.
+2026-05-10 14:46:16 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:46:19 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:46:23 | Attempt: 3 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:46:44 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports sudden-onset fever, sore throat, and severe headache. No
+    known cause found in medical history or review of systems. Family history
+    positive for several cancers.
+2026-05-10 14:47:50 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:47:59 | Attempt: 2 | Valid: True | Error: None | Msg: Patient presents with traumatic injury from fall down stairs and severe cognitive impairment consistent with advanced dementia, requiring immediate medical evaluation and support for potential underlying conditions exacerbated by fall.
+2026-05-10 14:48:31 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:48:38 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:48:40 | Attempt: 3 | Valid: True | Error: None | Msg: Patient reports persistent anxiety about possible cancer diagnosis.
+2026-05-10 14:49:06 | Attempt: 1 | Valid: True | Error: None | Msg: The patient reports chest pain and dyspnea, which raises concerns about a cardiac event. While the details could indicate several other conditions, a life-threatening condition is a possibility and immediate consultation with a specialist might be warranted. If this diagnosis were confirmed, an intervention would likely follow.
+2026-05-10 14:49:35 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:49:43 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:49:53 | Attempt: 3 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:50:29 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:50:34 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 14:50:39 | Attempt: 3 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:00:52 | Attempt: 1 | Valid: True | Error: None | Msg: While this presentation of recurrent headaches could be due to many causes, it's important to consider the potential for malignancy, especially with any new symptoms or unexplained weight loss. Consider a full medical history, physical examination, and appropriate imaging studies such as an MRI or CT scan. If any malignant findings are revealed, refer the patient on to a specialist. However, if no malignancy is found, continue with other potential diagnoses and management options. (Clinical context: The patient has a family history of cancer, which should be considered in the assessment.)
+2026-05-10 15:01:26 | Attempt: 1 | Valid: True | Error: None | Msg: This presentation is concerning and highly unlikely to be benign. Given the concern for a serious intracranial mass, it's important to proceed urgently given this high-risk scenario. Consider immediate MRI of the head with contrast if possible. If you have access to an otoscope, use it to evaluate the mastoid area and assess the possibility of mastoiditis or other complications. Anesthesia consultation should also be considered. This case is a medical emergency, so please do not hesitate to contact radiology or surgical specialists for consultation and assistance.
+2026-05-10 15:01:53 | Attempt: 1 | Valid: True | Error: None | Msg: This presentation could be due to orthostatic intolerance, likely secondary to chronic illness or medication side effects. Consider referring the patient for specialist evaluation and potential treatments, such as alterations to their lifestyle and possibly medication adjustment.
+2026-05-10 15:05:25 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:05:37 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:05:54 | Attempt: 3 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:08:01 | Attempt: 1 | Valid: True | Error: None | Msg: The patient's symptoms suggest an acute coronary syndrome. An ECG and serial troponins should be ordered, and cardiac monitoring should be considered pending evaluation. The clinician should investigate further and initiate appropriate therapy.
+2026-05-10 15:08:23 | Attempt: 1 | Valid: True | Error: None | Msg: Vitals stable: BP 108/72, HR 64, afebrile; no acute complaints on review of systems.
+2026-05-10 15:08:55 | Attempt: 1 | Valid: True | Error: None | Msg: This presentation suggests Meniere's disease, which often causes
+persistent vertigo. Given the patient's history and symptoms, consider a CT
+of the inner ear to confirm diagnosis. This will help guide management, including
+potential referral for further evaluation. If the CT is normal, consider
+referring the patient to a specialist for further evaluation and potential
+management options. [Clinical summary with tag]
+2026-05-10 15:16:56 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:17:07 | Attempt: 2 | Valid: True | Error: None | Msg: These findings could be consistent with chronic migraine. Consider referring the patient to a specialist for further evaluation and management. Inquire about family history and any previous diagnosis or treatment. (Possible follow-up questions include "What are the main features of chronic migraine?" and "Are there any medications available to treat it?")
+2026-05-10 15:17:33 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:17:46 | Attempt: 2 | Valid: True | Error: None | Msg: These symptoms are suggestive of postural orthostatic tachycardia syndrome (POTS), which is often associated with other autonomic nervous system dysfunction. Consider ordering a tilt-table test to confirm the diagnosis, and consider lifestyle modifications and caffeine restriction if indicated. Monitor the patient for evidence of other conditions such as multiple system atrophy or Fabry disease, which can present similarly.
+2026-05-10 15:18:14 | Attempt: 1 | Valid: True | Error: None | Msg: Given the patient's history of irregular meals and high caffeine intake, consider assessing for an eating disorder or substance abuse. Encourage a healthy balanced diet with regular meals and reduce caffeine consumption to moderate levels (up to two cups daily).
+2026-05-10 15:18:46 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:18:53 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:19:05 | Attempt: 3 | Valid: True | Error: None | Msg: Consider initiating a prophylactic agent such as propranolol or topiramate for chronic migraine prevention. Given family history and current concerns, this may be a good option to explore. However, it's essential to review any potential side effects with the patient before starting any new medication. [INSTITUTIONAL_NAME]'s headache specialist is consulted for more guidance on this case.
+2026-05-10 15:19:39 | Attempt: 1 | Valid: True | Error: None | Msg: Given the patient's diagnosis and history, it seems likely that they are presenting with migraine. This is a common complaint, often associated with other symptoms like neck pain or visual disturbances. Consider initiating a preventive agent (e.g., propranolol or topiramate) to reduce the frequency and severity of attacks. Initiate an acute-phase treatment for future attacks, such as a triptan. The patient may also benefit from lifestyle modifications like regular exercise, avoiding triggers, and practicing relaxation techniques.
+2026-05-10 15:20:05 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:20:14 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:20:23 | Attempt: 3 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:20:46 | Attempt: 1 | Valid: True | Error: None | Msg: Given the sudden termination, it is likely that the patient's needs have been met at this time. No further action required. Please confirm when the next appointment will be scheduled.
+2026-05-10 15:21:21 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:21:31 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:21:44 | Attempt: 3 | Valid: True | Error: None | Msg: Consider initiating empiric antibiotics in light of current symptoms, but ensure the patient gets a definitive diagnosis before continuing with any treatment plan.
+2026-05-10 15:22:11 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:22:30 | Attempt: 2 | Valid: True | Error: None | Msg: Given the patient's recent suicidal ideation and the presence of psychotic features, immediate referral to emergency mental health services is indicated. An urgent assessment by a psychiatrist should be arranged for as soon as possible. Consider contacting the crisis line if the patient cannot wait for an appointment. If available, the clinician might use the Behavioral Emergency Triage and Intervention (BETI) tool to triage the patient's level of urgency. [Adapted from "Clinical Practice Guideline for the Care of Patients With Acute Suicidal Ideation or Behavior" by the American Association of Suicide Prevention, 2018.]
+2026-05-10 15:22:56 | Attempt: 1 | Valid: True | Error: None | Msg: This history raises concerns for physical abuse, and immediate
+referral to an emergency department with medical clearance may be indicated. A thorough assessment should consider the context and severity of the incident, as well as any related risk factors such as domestic violence. Documentation is critical in this case. [Cite specific literature.]
+2026-05-10 15:23:25 | Attempt: 1 | Valid: True | Error: None | Msg: This patient's concerns are reasonable given the context. However, please ensure to respect the patient's autonomy and privacy during any subsequent communication with law enforcement agencies. Consider obtaining legal advice before engaging in any further discussion with the patient about this matter.
+2026-05-10 15:23:51 | Attempt: 1 | Valid: True | Error: None | Msg: Schedule any necessary follow-ups, including repeat labs as needed, to ensure this patient is meeting their treatment goals before the end of the year. Consider discussing non-adherence and potential barriers to adherence if they are not achieving their goals. (Possible actions: order a repeat lab test, review medication regimen, provide educational material on adherence.)
+2026-05-10 15:24:31 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:25:27 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 15:25:38 | Attempt: 3 | Valid: True | Error: None | Msg: Given these details, possible causes could include December 3rd-related illness (e.g., adverse drug reaction), another medical condition, or an overactive imagination. Consider asking for further details to help triage and formulate a plan of care. [Possible actions: review medications, consider alternative diagnoses, or initiate psychiatric consultation if appropriate.]
+2026-05-10 16:23:17 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports severe headache after falling down stairs and striking the head, with mild redness at the top of the head.
+2026-05-10 16:23:47 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:23:58 | Attempt: 2 | Valid: True | Error: None | Msg: Patient reports mild recurrent headache in frontal and occipital regions with no reported neurological findings or trauma history.
+2026-05-10 16:24:24 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports persistent sleep deprivation and related symptoms. This warrants further assessment for potential causes (e.g., insomnia or other sleep disorders), management plan recommendations, and possibly referral to a specialist.
+2026-05-10 16:24:56 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:25:09 | Attempt: 2 | Valid: True | Error: None | Msg: Patient presents with episodic orthostatic dizziness and difficulty concentrating with occasional mild nausea, without any cardiac symptoms.
+2026-05-10 16:25:38 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports suboptimal dietary habits, including frequent meal skipping and excessive caffeine consumption.
+2026-05-10 16:26:07 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports consumption of approximately 4-5 cups of coffee daily and occasional use of energy drinks.
+2026-05-10 16:26:30 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports daily headache.
+2026-05-10 16:27:06 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:27:15 | Attempt: 2 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:27:21 | Attempt: 3 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 16:27:39 | Attempt: 1 | Valid: True | Error: None | Msg: Patient does not report any symptoms, diagnoses, medications, history, or findings.
+2026-05-10 16:27:59 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:28:02 | Attempt: 2 | Valid: True | Error: None | Msg: No new information was input.
+2026-05-10 16:28:28 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:28:33 | Attempt: 2 | Valid: True | Error: None | Msg: Patient reports severe headache after falling down stairs and striking the head, with mild redness at the top of the head.
+2026-05-10 16:42:42 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:42:48 | Attempt: 2 | Valid: True | Error: None | Msg: Fever, cough, and difficulty breathing are concerning symptoms suggestive of pneumonia. Obtain chest x-ray to confirm diagnosis. Consider appropriate antibiotics.
+2026-05-10 16:43:08 | Attempt: 1 | Valid: True | Error: None | Msg: This patient's notes are not informative enough for me to draw any conclusions, make recommendations, or provide advice.
+2026-05-10 16:43:33 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports severe headache after falling down stairs and striking the head, with mild redness at the top of the head.
+2026-05-10 16:44:09 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports recurring fatigue, headache, orthostatic dizziness, and difficulty concentrating.
+2026-05-10 16:44:32 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 16:44:39 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 16:44:53 | Attempt: 3 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 16:45:22 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:45:29 | Attempt: 2 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 16:45:40 | Attempt: 3 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:46:13 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:46:22 | Attempt: 2 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:46:27 | Attempt: 3 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:46:53 | Attempt: 1 | Valid: True | Error: None | Msg: Patient presents with multiple anxiety medications for unknown duration and reports worsening symptoms of depression.
+2026-05-10 16:47:19 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports receiving an unspecified medication from their family member.
+2026-05-10 16:47:39 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:47:51 | Attempt: 2 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:47:58 | Attempt: 3 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:48:31 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports symptoms of anxiety and a history of caffeinated beverage consumption. Clinical guidelines recommend the use of caffeine tablets as an alternative to benzodiazepines for managing anxiety.
+2026-05-10 16:48:51 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports symptomatic improvement after receiving treatment, no new findings.
+2026-05-10 16:49:14 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports dizziness after starting lisinopril.
+2026-05-10 16:49:35 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:49:38 | Attempt: 2 | Valid: True | Error: None | Msg: Patient reports no symptoms, no medications, no history, no findings mentioned.
+2026-05-10 16:49:58 | Attempt: 1 | Valid: False | Error: parse_error | Msg: No valid <Note> or <Suggestion> tag found
+2026-05-10 16:50:04 | Attempt: 2 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 16:50:08 | Attempt: 3 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 17:02:22 | Attempt: 1 | Valid: True | Error: None | Msg: Patient does not report any symptoms, findings, medications, or history that would justify an output from me.
+2026-05-10 17:02:50 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports persistent and severe headache after falling down stairs and striking the head, with mild redness at the top of the head.
+2026-05-10 17:05:09 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 17:05:11 | Attempt: 2 | Valid: True | Error: None | Msg: No input from this patient.
+2026-05-10 17:05:37 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports daily fatigue and frequent severe headaches mainly in the forehead and behind the eyes.
+2026-05-10 17:06:02 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports poor sleep quality for several weeks, citing long working hours and resulting average of 5 hours of sleep per night.
+2026-05-10 17:06:36 | Attempt: 1 | Valid: True | Error: None | Msg: Patient describes fatigue and other symptoms of low blood pressure, possibly due to dehydration from inadequate fluid intake. Low blood pressure can lead to syncope (dizziness) upon standing quickly. Consider appropriate dietary advice for adequate hydration.
+2026-05-10 17:06:58 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports severe headache after falling down stairs and striking the head, with mild redness at the top of the head.
+2026-05-10 17:07:28 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports prolonged use of Discord messaging platform since December, potential sleep deprivation, and excessive energy drink consumption.
+2026-05-10 17:07:51 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 17:07:56 | Attempt: 2 | Valid: True | Error: None | Msg: Patient reports no current medication regimen.
+2026-05-10 17:08:26 | Attempt: 1 | Valid: True | Error: None | Msg: Patient presents with long-term anxiety medication use and recent worsening symptoms. There is a lack of established improvement in anxiety despite medication use.
+2026-05-10 17:08:48 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports ingesting an unknown medication after falling down stairs and striking the head.
+2026-05-10 17:09:09 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 17:09:14 | Attempt: 2 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 17:09:23 | Attempt: 3 | Valid: True | Error: None | Msg: Patient reports severe headache after falling down stairs and striking the head, with mild redness at the top of the head.
+2026-05-10 17:09:48 | Attempt: 1 | Valid: True | Error: None | Msg: Patient reports increasing anxiety symptoms and high caffeine intake.
+2026-05-10 17:10:17 | Attempt: 1 | Valid: False | Error: parse_error | Msg: Response contains text outside Note/Suggestion tags
+2026-05-10 17:10:19 | Attempt: 2 | Valid: True | Error: None | Msg: No clinically relevant information was captured from this input.

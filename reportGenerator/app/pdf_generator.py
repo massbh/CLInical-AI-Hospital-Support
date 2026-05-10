@@ -119,69 +119,47 @@ def update_report_preview_flag_db(report_id: str, preview_value) -> bool:
         raise
 
 
-def loop_reports(report_id: str) -> dict:
+def loop_reports(report_id: str) -> list[dict]:
     """
-    Fetch and organize report sections by type.
-    
-    Returns dict with keys: assessment, diagnosis, prescription
+    Fetch report sections in their stored order. Each section is rendered
+    in the PDF in the same order it was created in the database, so the
+    "Assessment & Plan" section appears last when stored last and no
+    section is ever dropped or merged.
     """
-    sections_data = {
-        "assessment": None,
-        "diagnosis": None,
-        "prescription": None,
-        "other": []
-    }
-    
     try:
         sections = fetch_report_sections(report_id)
-        
-        for section in sections:
-            title_lower = section.get('title', '').lower().strip()
-            content = section.get('content', '')
-            
-            if 'assess' in title_lower or 'symptom' in title_lower:
-                sections_data["assessment"] = {
-                    "title": section.get('title'),
-                    "content": content
-                }
-            elif 'diagnos' in title_lower:
-                sections_data["diagnosis"] = {
-                    "title": section.get('title'),
-                    "content": content
-                }
-            elif 'prescri' in title_lower or 'recommendation' in title_lower:
-                sections_data["prescription"] = {
-                    "title": section.get('title'),
-                    "content": content
-                }
-            else:
-                # Store other sections
-                sections_data["other"].append({
-                    "title": section.get('title'),
-                    "content": content
-                })
-        
-        logger.info(f"Organized sections for report {report_id}: "
-                   f"assessment={sections_data['assessment'] is not None}, "
-                   f"diagnosis={sections_data['diagnosis'] is not None}, "
-                   f"prescription={sections_data['prescription'] is not None}")
-        
-        return sections_data
-        
+        ordered = [
+            {"title": s.get("title"), "content": s.get("content", "")}
+            for s in sections
+        ]
+        logger.info(
+            f"Loaded {len(ordered)} sections for report {report_id} in stored order"
+        )
+        return ordered
     except Exception as e:
-        logger.error(f"Error organizing sections for report {report_id}: {e}")
-        return sections_data
+        logger.error(f"Error loading sections for report {report_id}: {e}")
+        return []
 
 
-def generate_formatted_pdf(sections_data: dict, report_data: dict, output_file) -> bool:
+def generate_formatted_pdf(sections_data, report_data: dict, output_file) -> bool:
     """
-    Generate a structured PDF with Assessment → Diagnosis → Prescription sections.
+    Generate a PDF rendering every section in stored order.
 
     Args:
-        sections_data: Dict with keys assessment, diagnosis, prescription
+        sections_data: List of {title, content} dicts in stored order. For
+            backwards compatibility, a legacy bucketed dict is also accepted
+            and flattened to assessment → diagnosis → prescription → other.
         report_data: Report metadata (patient name, doctor, date, etc.)
         output_file: Path to output PDF, or a writable binary file-like (e.g. BytesIO)
     """
+    if isinstance(sections_data, dict):
+        flattened = []
+        for key in ("assessment", "diagnosis", "prescription"):
+            entry = sections_data.get(key)
+            if entry:
+                flattened.append(entry)
+        flattened.extend(sections_data.get("other", []) or [])
+        sections_data = flattened
     try:
         doc = SimpleDocTemplate(output_file, pagesize=letter, topMargin=0.75*inch, bottomMargin=0.75*inch)
         story = []
@@ -249,42 +227,18 @@ def generate_formatted_pdf(sections_data: dict, report_data: dict, output_file) 
         story.append(info_table)
         story.append(Spacer(1, 0.2*inch))
         
-        # 1. Assessment Section (First)
-        if sections_data.get('assessment'):
-            assessment_content = str(sections_data['assessment'].get('content', '')).strip()
-            if assessment_content:
-                story.append(Paragraph("1. Assessment", heading_style))
-                story.append(Paragraph(assessment_content, body_style))
-                story.append(Spacer(1, 0.1*inch))
-        
-        # 2. Diagnosis Section (Second)
-        if sections_data.get('diagnosis'):
-            diagnosis_content = str(sections_data['diagnosis'].get('content', '')).strip()
-            if diagnosis_content:
-                story.append(Paragraph("2. Diagnosis", heading_style))
-                story.append(Paragraph(diagnosis_content, body_style))
-                story.append(Spacer(1, 0.1*inch))
-        
-        # 3. Prescription Section (Last)
-        if sections_data.get('prescription'):
-            prescription_content = str(sections_data['prescription'].get('content', '')).strip()
-            if prescription_content:
-                story.append(Paragraph("3. Prescription & Recommendations", heading_style))
-                story.append(Paragraph(prescription_content, body_style))
-                story.append(Spacer(1, 0.1*inch))
-        
-        # 4. Other sections (if any)
-        if sections_data.get('other'):
-            for idx, section in enumerate(sections_data['other'], 4):
-                section_title = str(section.get('title', f'Section {idx}')).strip()
-                section_content = str(section.get('content', '')).strip()
-                if section_content:
-                    story.append(Paragraph(f"{idx}. {section_title}", heading_style))
-                    story.append(Paragraph(section_content, body_style))
-                    story.append(Spacer(1, 0.1*inch))
-        
-        # Ensure story is not empty
-        if len(story) <= 4:  # Just headers, no content
+        rendered = 0
+        for idx, section in enumerate(sections_data, 1):
+            section_title = str(section.get('title', f'Section {idx}')).strip()
+            section_content = str(section.get('content', '')).strip()
+            if not section_content:
+                continue
+            story.append(Paragraph(f"{idx}. {section_title}", heading_style))
+            story.append(Paragraph(section_content, body_style))
+            story.append(Spacer(1, 0.1*inch))
+            rendered += 1
+
+        if rendered == 0:
             story.append(Paragraph("No content available for this report.", body_style))
         
         # Build PDF

@@ -2,22 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 
 /**
- * Generate a preview PDF for a report
- * This generates the PDF WITHOUT finalizing the report sections
+ * Generate a preview PDF for a report and stream it back inline so the
+ * browser can render it in a new tab. Does NOT finalize the report.
  */
 export async function POST(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id: reportId } = await params;
 
-    // Check if report exists
     const reportCheck = await pool.query(
       "SELECT id FROM reports WHERE id = $1",
       [reportId]
     );
-
     if (reportCheck.rows.length === 0) {
       return NextResponse.json(
         { error: "Report not found" },
@@ -25,32 +23,26 @@ export async function POST(
       );
     }
 
-    // Call reportGenerator to generate preview PDF
     const response = await fetch(
       `http://localhost:8004/generate-pdf/${reportId}`,
-      {
-        method: "POST",
-        headers: {
-          "X-API-Key": process.env.REPORT_GENERATOR_API_KEY || "dev-key",
-        },
-      }
+      { method: "POST" }
     );
 
     if (!response.ok) {
-      const error = await response.json();
+      const data = await response.json().catch(() => ({}));
       return NextResponse.json(
-        { error: error.detail || "Failed to generate preview PDF" },
+        { error: data.detail || "Failed to generate preview PDF" },
         { status: response.status }
       );
     }
 
-    const data = await response.json();
-
-    return NextResponse.json({
-      success: true,
-      message: "Preview PDF generated successfully",
-      report_id: reportId,
-      pdf_path: data.pdf_path,
+    const buf = await response.arrayBuffer();
+    return new NextResponse(buf, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": `inline; filename="report-${reportId}-preview.pdf"`,
+      },
     });
   } catch (error) {
     console.error("Error generating preview PDF:", error);

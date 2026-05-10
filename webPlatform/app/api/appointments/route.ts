@@ -92,10 +92,10 @@ export async function POST(request: NextRequest) {
         const result = await pool.query(  
             `INSERT INTO booked_appointments (doctor_id, patient_id, date, time)  
             VALUES ($1, $2, $3, $4)  
-            RETURNING id`,  
+            RETURNING id, doctor_id AS "doctorId", date::text, time`,  
             [doctorId, patientId, date, time]  
         ); 
-        return NextResponse.json({ id: result.rows[0].id }, { status: 201 }); 
+        return NextResponse.json(result.rows[0], { status: 201 }); 
     } catch (error: unknown) {
         // handle duplicate booking date/time. postgres throws error code 23505 for unique constraint violations
         if (

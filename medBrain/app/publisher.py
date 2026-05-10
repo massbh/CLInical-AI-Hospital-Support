@@ -45,7 +45,14 @@ async def publish_to_webplatform(kind: str, content: str, appointment_id: str) -
     try:
         async with httpx.AsyncClient(timeout=WEBPLATFORM_TIMEOUT_S) as client:
             response = await client.post(url, json=payload)
-            response.raise_for_status()
+            if response.status_code >= 400:
+                body = response.text[:500]
+                _log_publish_failure(
+                    kind,
+                    appointment_id,
+                    f"HTTP {response.status_code} {url} body={body!r}",
+                )
+                return False
         return True
     except Exception as exc:
         _log_publish_failure(kind, appointment_id, str(exc))

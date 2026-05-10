@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import NoteCard from "../../components/conversationScreen/NoteCard";
 import SuggestionCard from "../../components/conversationScreen/SuggestionCard";
 import StreamStatus from "../../components/conversationScreen/StreamStatus";
@@ -11,15 +12,30 @@ import { getAuthHeaders } from "@/lib/client-auth";
 const DISPLAY_LIMIT = 10;
 const POLL_INTERVAL = Number(process.env.NEXT_PUBLIC_POLL_INTERVAL_MS ?? 3000);
 
+type CurrentAppointment = {
+    id: string;
+    patient_id: string;
+    date: string;
+    time: string;
+    patient_name: string;
+    patient_surname: string;
+    doctor_name: string;
+};
+
 export default function ConversationPage() {
+    const router = useRouter();
     const [notes, setNotes] = useState<Note[]>([]);
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
     const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
     const [appointmentId, setAppointmentId] = useState<string | null>(null);
+    const [appointment, setAppointment] = useState<CurrentAppointment | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isAppointmentActive, setIsAppointmentActive] = useState(false);
     const [isToggling, setIsToggling] = useState(false);
     const [toggleError, setToggleError] = useState<string | null>(null);
+    const [hasStarted, setHasStarted] = useState(false);
+    const [isCreatingReport, setIsCreatingReport] = useState(false);
+    const [createReportError, setCreateReportError] = useState<string | null>(null);
 
     const appointmentIdRef = useRef<string | null>(null);
     const isAppointmentActiveRef = useRef(false);
@@ -35,16 +51,19 @@ export default function ConversationPage() {
                     setError(data.error || "Could not find current appointment");
                     return;
                 }
-                const appointment = await response.json();
+                const appointmentData: CurrentAppointment = await response.json();
                 setError(null);
+                setAppointment(appointmentData);
 
-                if (appointment.id !== appointmentIdRef.current) {
-                    appointmentIdRef.current = appointment.id;
-                    setAppointmentId(appointment.id);
+                if (appointmentData.id !== appointmentIdRef.current) {
+                    appointmentIdRef.current = appointmentData.id;
+                    setAppointmentId(appointmentData.id);
                     setNotes([]);
                     setSuggestions([]);
                     setIsAppointmentActive(false);
                     isAppointmentActiveRef.current = false;
+                    setHasStarted(false);
+                    setCreateReportError(null);
                 }
             } catch {
                 setError("Failed to connect to server");
@@ -56,18 +75,9 @@ export default function ConversationPage() {
         return () => clearInterval(interval);
     }, []);
 
-    useEffect(() => {
-        return () => {
-            if (!isAppointmentActiveRef.current) return;
-            const id = appointmentIdRef.current;
-            if (!id) return;
-            fetch(`/api/appointments/${id}/stop`, {
-                method: "POST",
-                keepalive: true,
-                headers: getAuthHeaders(),
-            }).catch(() => {});
-        };
-    }, []);
+    // No auto-stop on unmount: page refreshes used to fire this and kill the
+    // backend session. The doctor ends the appointment explicitly via the
+    // button instead.
 
     useEffect(() => {
         if (!appointmentId || !isAppointmentActive) return;
@@ -130,10 +140,42 @@ export default function ConversationPage() {
             const next = !isAppointmentActive;
             setIsAppointmentActive(next);
             isAppointmentActiveRef.current = next;
+            if (next) setHasStarted(true);
         } catch {
             setToggleError(`Failed to ${action} appointment`);
         } finally {
             setIsToggling(false);
+        }
+    }
+
+    async function handleCreateReport() {
+        if (!appointmentId || !appointment || isCreatingReport) return;
+        setIsCreatingReport(true);
+        setCreateReportError(null);
+        try {
+            const response = await fetch(
+                `/api/reports/create-from-appointment/${appointmentId}`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+                    body: JSON.stringify({
+                        patient_name: appointment.patient_name,
+                        patient_surname: appointment.patient_surname,
+                        doctor_name: appointment.doctor_name,
+                        title: `Consultation – ${appointment.patient_name} ${appointment.patient_surname}`,
+                    }),
+                }
+            );
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                setCreateReportError(data.error || "Failed to create report");
+                return;
+            }
+            router.push(`/reports/${data.report_id}`);
+        } catch {
+            setCreateReportError("Failed to create report");
+        } finally {
+            setIsCreatingReport(false);
         }
     }
 
@@ -181,8 +223,23 @@ export default function ConversationPage() {
                             ? "End appointment"
                             : "Start appointment"}
                 </button>
+                {hasStarted && !isAppointmentActive && appointmentId && (
+                    <button
+                        type="button"
+                        onClick={handleCreateReport}
+                        disabled={isCreatingReport}
+                        className="rounded-lg border border-[#2CA6AE] px-4 py-2 text-sm font-medium text-[#167980] shadow-sm transition-colors hover:bg-[#E6F5F6] disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                        {isCreatingReport ? "Creating report..." : "Create report"}
+                    </button>
+                )}
             </div>
         </div>
+        {createReportError && (
+            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                {createReportError}
+            </div>
+        )}
 
         {toggleError && (
             <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">

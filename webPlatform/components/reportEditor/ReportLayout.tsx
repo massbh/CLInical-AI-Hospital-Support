@@ -105,14 +105,31 @@ export default function ReportLayout({ reportId }: { reportId: string }) {
       const response = await fetch(`/api/reports/${reportId}/generate-pdf-preview`, {
         method: "POST",
       });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error);
-      
-      setStatusMessage({ type: "success", message: "PDF preview generated! Download to view." });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to generate PDF preview");
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const opened = window.open(url, "_blank");
+      if (!opened) {
+        // Popup blocked — fall back to a download.
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `report-${reportId}-preview.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+      // Revoke after the browser has had a chance to load the blob.
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
+
+      setStatusMessage({ type: "success", message: "PDF preview opened in a new tab." });
     } catch (error) {
-      setStatusMessage({ 
-        type: "error", 
-        message: error instanceof Error ? error.message : "Failed to generate PDF preview" 
+      setStatusMessage({
+        type: "error",
+        message: error instanceof Error ? error.message : "Failed to generate PDF preview",
       });
     } finally {
       setIsPreviewingPdf(false);
@@ -120,20 +137,67 @@ export default function ReportLayout({ reportId }: { reportId: string }) {
   }
 
   async function handleFinalizeReport() {
+    const suggestedName = `report-${reportId}.pdf`;
+
+    // showSaveFilePicker must run inside the user gesture, before any await.
+    const showSaveFilePicker = (
+      window as unknown as {
+        showSaveFilePicker?: (opts: {
+          suggestedName: string;
+          types: { description: string; accept: Record<string, string[]> }[];
+        }) => Promise<FileSystemFileHandle>;
+      }
+    ).showSaveFilePicker;
+
+    let handle: FileSystemFileHandle | null = null;
+    if (typeof showSaveFilePicker === "function") {
+      try {
+        handle = await showSaveFilePicker({
+          suggestedName,
+          types: [
+            { description: "PDF document", accept: { "application/pdf": [".pdf"] } },
+          ],
+        });
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        console.warn("showSaveFilePicker failed, falling back:", err);
+        handle = null;
+      }
+    }
+
     setIsFinalizing(true);
     setStatusMessage(null);
     try {
       const response = await fetch(`/api/reports/${reportId}/finalize-and-generate-pdf`, {
         method: "POST",
       });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error);
-      
-      setStatusMessage({ type: "success", message: "Report finalized! PDF generated successfully." });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to finalize report");
+      }
+
+      const blob = await response.blob();
+
+      if (handle) {
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+      } else {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = suggestedName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
+      setStatusMessage({ type: "success", message: "Report finalized and PDF saved." });
     } catch (error) {
-      setStatusMessage({ 
-        type: "error", 
-        message: error instanceof Error ? error.message : "Failed to finalize report" 
+      setStatusMessage({
+        type: "error",
+        message: error instanceof Error ? error.message : "Failed to finalize report",
       });
     } finally {
       setIsFinalizing(false);

@@ -29,16 +29,50 @@ def fetch_report(report_id: str) -> dict | None:
             return cur.fetchone()
 
 
-def fetch_report_sections(report_id: str) -> list[dict]:
+def claim_ready_reports() -> list[str]:
+    """Atomically claim every newly-finalized report that hasn't been emailed yet.
+
+    A finalized report is one with `preview = FALSE`. This UPDATE-RETURNING is
+    the claim — once a row is in `email_status = 'ready'`, no other tick will
+    pick it up.
+    """
     with _get_connection() as conn:
-        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        with conn.cursor() as cur:
             cur.execute(
                 """
-                SELECT title, content, status
-                FROM report_sections
-                WHERE report_id = %s
-                ORDER BY created_at ASC
+                UPDATE reports
+                SET email_status = 'ready'
+                WHERE preview = FALSE AND email_status IS NULL
+                RETURNING id
+                """
+            )
+            return [str(row[0]) for row in cur.fetchall()]
+
+
+def mark_sent(report_id: str) -> None:
+    with _get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE reports
+                SET email_status = 'sent',
+                    email_sent_at = NOW(),
+                    email_last_error = NULL
+                WHERE id = %s
                 """,
                 (report_id,),
             )
-            return cur.fetchall()
+
+
+def mark_failed(report_id: str, error: str) -> None:
+    with _get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE reports
+                SET email_status = 'failed',
+                    email_last_error = %s
+                WHERE id = %s
+                """,
+                (error[:2000], report_id),
+            )

@@ -35,6 +35,10 @@ class AskResponse(BaseModel):
         default=False,
         description="Whether the message was successfully written to the webPlatform DB.",
     )
+    outputs: list[dict[str, str]] = Field(
+        default_factory=list,
+        description="Validated tagged outputs published separately as Note/Suggestion.",
+    )
 
 
 @router.post(
@@ -60,15 +64,22 @@ async def ask(body: AskRequest) -> AskResponse:
             log_validation_attempt(attempt_number, parsed_result)
 
             if parsed_result.is_valid:
-                published = await publish_to_webplatform(
-                    parsed_result.kind,
-                    parsed_result.msg,
-                    body.appointment_id,
-                )
+                published = True
+                outputs = []
+                for kind, msg in parsed_result.items or [(parsed_result.kind, parsed_result.msg)]:
+                    item_published = await publish_to_webplatform(
+                        kind,
+                        msg,
+                        body.appointment_id,
+                    )
+                    published = published and item_published
+                    outputs.append({"kind": kind, "response": msg})
+
                 return AskResponse(
                     response=parsed_result.msg,
                     kind=parsed_result.kind,
                     published=published,
+                    outputs=outputs,
                 )
 
             attempt_number += 1

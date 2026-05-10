@@ -96,7 +96,10 @@ def get_next_batch():
 
 @app.post("/reset")
 def reset_state():
-    """Reset the batching cursor so the next /next-batch starts at index 0.
-    Called by tradLlm when a new appointment session starts."""
+    """Reset the batching cursor AND clear the transcript so each appointment
+    starts from a clean slate. Called by tradLlm when a session starts."""
     save_state({"last_index": 0})
-    return {"ok": True, "last_index": 0}
+    if os.path.exists(TRANSCRIPT_FILE):
+        with open(TRANSCRIPT_FILE, "w") as f:
+            f.truncate(0)
+    return {"ok": True, "last_index": 0, "transcript_cleared": True}

@@ -1,18 +1,39 @@
-[2026-05-10 15:07:42] Hi Doctor, a patient.
-[2026-05-10 15:07:50] What's troubling you today? Well Dr. My head hurts, I fell down the stairs.
-[2026-05-10 15:08:05] And I need you to give me a diagnosis or maybe a suggestion. Okay, was there any redness on your head after you fell? Yes, Doctor, there was. Is there redness anymore?
-[2026-05-10 15:08:17] You just had to roll please. Can't make sense. The fixer.
-[2026-05-10 15:08:32] Bu... demonstration Ya dövkeye et, kompresコ
-[2026-05-10 15:08:33] Do I now?
-[2026-05-10 15:08:39] I am thinking of killing myself, Doctor.
-[2026-05-10 15:08:45] No patient, don't do that. I won't do it, Dr. I will.
-[2026-05-10 15:08:57] خلوة دوكتر
-[2026-05-10 15:09:23] Ок, друзья, heute мыர Cong present하게. НАrec chaîne!
-[2026-05-10 15:09:36] What the hell is happening? Because there wasn't enough nodes. The Rote was not long enough. Okay. But there is no suggestion. I can do it with the Dagnosis.
-[2026-05-10 15:09:39] Yeah, because you killed the...
-[2026-05-10 15:09:48] Dymenŷ dir 플�wy
-[2026-05-10 15:09:52] We need to make a script, we can just ask for the script No, no, no, no Okay, what do we have to fix? We have to train the script We have to
-[2026-05-10 15:10:18] go over a real doctor patient conversation and check if it's going to properly after like 10 minutes of conversation if it's going to properly generate this if it does it will work because for now the only thing that it had to go about it was I'm gonna kill myself doctor
-[2026-05-10 15:10:25] like everything reload and do that.
-[2026-05-10 15:10:29] Yes, and some of his conversations will be about being a doctor.
-[2026-05-10 15:10:36] So you know who's gonna do it
+[2026-05-10 16:22:55] Morning, what brings you in today?
+[2026-05-10 16:23:10] Hi Doctor, I've been feeling really tired for the past few weeks and I keep getting headaches Damn, I'm sorry to hear that. Can you describe the headaches? Where are they located?
+[2026-05-10 16:23:24] Mostly around my forehead and behind my eyes they're not unbearable, but they happen almost every day Have you noticed anything that makes them better worse?
+[2026-05-10 16:23:30] Staring at screens definitely makes them worse, sleeping helps a little.
+[2026-05-10 16:23:40] Under sur how has the steep been lately? Fee tea bad honestly, I stay up late working and usually get around 5 hours.
+[2026-05-10 16:23:48] that could definitely contribute any other symptoms besides fatigue and headaches.
+[2026-05-10 16:24:01] Sometimes I feel dizzy when standing up quickly and I've had trouble concentrating. Have you considered heavy experience fever, nausea, chest pain or shortness of breath?
+[2026-05-10 16:24:09] No chest pain or breathing problems, mild nausea once or twice, but nothing major.
+[2026-05-10 16:24:17] How is your diet in hydration? Not great, I skip meals sometimes and drink way too much coffee.
+[2026-05-10 16:24:21] Approximately how much caffeine per day.
+[2026-05-10 16:24:28] Maybe 4 or 5 cups of coffee plus energy drinks occasionally.
+[2026-05-10 16:24:30] Well, does it mean occasionally?
+[2026-05-10 16:24:35] almost every day
+[2026-05-10 16:24:40] That's quite a bit. Do you take any medications or supplements?
+[2026-05-10 16:24:46] Just I will profit for the head of the head. I think it's caffeine.
+[2026-05-10 16:25:02] You should consider killing yourself. Maybe? I don't think that would be good for me, Doctor. Are you sure about that? Yes, I'm the Doctor. Listen to me.
+[2026-05-10 16:25:18] Well, I don't want to. I don't think that's the correct diagnosis. Maybe your AI tool has a better idea. No! Fuck the AI tool!
+[2026-05-10 16:25:39] H欢 me fest!
+[2026-05-10 16:25:44] bir yer fallait 이번에 Bonus gör versin When would be scheduled
+[2026-05-10 16:25:55] I'm considering your follow up.
+[2026-05-10 16:25:58] visit
+[2026-05-10 16:26:00] So we could.
+[2026-05-10 16:26:03] check
+[2026-05-10 16:26:06] Your headaches
+[2026-05-10 16:26:15] when would you like to schedule them?
+[2026-05-10 16:26:19] Let's schedule it.
+[2026-05-10 16:26:21] Next
+[2026-05-10 16:26:23] week
+[2026-05-10 16:26:35] Okay, what day exactly? Do you drink energy drinks on Wednesdays? Question mark? Yes, I do.
+[2026-05-10 16:26:45] Then on Thursday. Okay Thursday is fine with me. Do not drink any caffeine beforehand.
+[2026-05-10 16:26:50] Okay understood. Can I trust you on this?
+[2026-05-10 16:26:53] Probably not.
+[2026-05-10 16:26:56] You know what's gonna happen in the video?
+[2026-05-10 16:27:00] What will happen?
+[2026-05-10 16:27:05] Our city scan is going to explode your ass.
+[2026-05-10 16:27:17] Okay, I guess I'm forced to not drink any energy drinks. I really don't want to explode. That's true. Exploding is not healthy.
+[2026-05-10 16:27:27] Thank you, Dr. Goodby, see you on Thursday. Wait, are there any medications on the out supplements you are taking?
+[2026-05-10 16:27:40] As I said before, I take some ibuprofen and that's it, maybe some methamphetamine sometimes on the weekends. How often are the weekends happening?
+[2026-05-10 16:27:42] Twice a week

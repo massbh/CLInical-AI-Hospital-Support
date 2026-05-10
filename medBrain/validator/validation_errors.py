@@ -11,6 +11,7 @@ class ValidationResult:
     error_type: str | None = None
     msg: str | None = None
     kind: str | None = None  # "Note" or "Suggestion" when is_valid is True
+    items: list[tuple[str, str]] | None = None
 
     def to_error_dict(self) -> dict:
         return {

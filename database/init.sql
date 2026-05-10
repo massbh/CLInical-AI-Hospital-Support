@@ -99,6 +99,7 @@ CREATE TABLE reports (
     date DATE NOT NULL,
     title VARCHAR(255) NOT NULL,
     content TEXT,
+    preview BOOLEAN DEFAULT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -237,19 +238,19 @@ INSERT INTO suggestions (content, source, is_new, appointment_id) VALUES
      'medBrain', TRUE, 'cccc0000-0000-0000-0000-000000000002'::UUID);
   
 -- Reports  
-INSERT INTO reports (id, patient_id, doctor_id, patient_name, patient_surname, doctor_name, date, title, content) VALUES  
+INSERT INTO reports (id, patient_id, doctor_id, patient_name, patient_surname, doctor_name, date, title, content, preview) VALUES  
     ('dddd0000-0000-0000-0000-000000000001'::UUID,  
      'aaaa0000-0000-0000-0000-000000000003'::UUID,  
      'aaaa0000-0000-0000-0000-000000000001'::UUID,  
      'Alice', 'Williams', 'Dr. Sarah Johnson',  
      '2026-04-28', 'Annual Physical Examination',  
-     'Comprehensive annual physical examination for patient Alice Williams.'),  
+     'Comprehensive annual physical examination for patient Alice Williams.', NULL),  
     ('dddd0000-0000-0000-0000-000000000002'::UUID,  
      'aaaa0000-0000-0000-0000-000000000004'::UUID,  
      'aaaa0000-0000-0000-0000-000000000002'::UUID,  
      'Bob', 'Martinez', 'Dr. Michael Chen',  
      '2026-04-25', 'Post-Operative Follow-Up',  
-     'Follow-up assessment after arthroscopic knee surgery.');  
+     'Follow-up assessment after arthroscopic knee surgery.', NULL);  
   
 -- Report sections  
 INSERT INTO report_sections (report_id, title, content, status) VALUES  

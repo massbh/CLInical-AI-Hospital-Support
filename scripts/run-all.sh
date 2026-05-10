@@ -224,6 +224,7 @@ do_stop() {
     kill_port 8001  'medBrain'
     kill_port 8002  'tradLlm'
     kill_port 8003  'emailService'
+    kill_port 8004  'reportGenerator'
     kill_port 3000  'webPlatform'
     kill_port 11434 'ollama'
 
@@ -235,7 +236,7 @@ do_stop() {
 
     if [ "$OS" = 'windows' ]; then
         step 'Closing mintty windows'
-        for t in batching medBrain tradLlm emailService whisper webPlatform; do
+        for t in batching medBrain tradLlm emailService reportGenerator whisper webPlatform; do
             taskkill //FI "WINDOWTITLE eq $t" //T //F >/dev/null 2>&1 || true
         done
     fi
@@ -264,6 +265,7 @@ do_status() {
         "medBrain :8001|http|http://localhost:8001/docs"
         "tradLlm :8002|http|http://localhost:8002/docs"
         "emailService :8003|http|http://localhost:8003/docs"
+        "reportGenerator :8004|http|http://localhost:8004/health"
         "webPlatform :3000|http|http://localhost:3000"
     )
     for item in "${items[@]}"; do
@@ -331,6 +333,7 @@ do_start() {
     spawn 'medBrain' "$REPO_ROOT/medBrain"             uvicorn app.main:app --reload --port 8001
     spawn 'tradLlm'  "$REPO_ROOT/tradLlm"              uvicorn app.main:app --reload --port 8002
     [ "$NO_EMAIL"   -eq 0 ] && spawn 'emailService' "$REPO_ROOT/emailService" uvicorn app.main:app --reload --port 8003
+    spawn 'reportGenerator' "$REPO_ROOT/reportGenerator" uvicorn app.main:app --reload --port 8004
     [ "$NO_WHISPER" -eq 0 ] && spawn 'whisper'      "$REPO_ROOT/eavesdropper" python transcribe.py --model tiny --output transcript.txt
     spawn 'webPlatform' "$REPO_ROOT/webPlatform" npm run dev
 
@@ -341,6 +344,7 @@ do_start() {
         "batching|http://localhost:8000/docs"
         "medBrain|http://localhost:8001/docs"
         "tradLlm|http://localhost:8002/docs"
+        "reportGenerator|http://localhost:8004/health"
         "webPlatform|http://localhost:3000"
     )
     [ "$NO_EMAIL" -eq 0 ] && checks+=("emailService|http://localhost:8003/docs")

@@ -15,8 +15,7 @@ class Config:
     """Report Generator configuration."""
     
     SERVICE_PORT = int(os.getenv("SERVICE_PORT", "8004"))
-    API_KEY = os.getenv("API_KEY", "dev-key")
-    
+
     DATABASE_URL = os.getenv(
         "DATABASE_URL",
         "postgresql://user:password@localhost:5432/clinical"

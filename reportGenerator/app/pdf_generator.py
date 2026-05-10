@@ -1,5 +1,6 @@
 """PDF generation and report processing logic."""
 
+import io
 import logging
 from datetime import datetime
 
@@ -172,14 +173,14 @@ def loop_reports(report_id: str) -> dict:
         return sections_data
 
 
-def generate_formatted_pdf(sections_data: dict, report_data: dict, output_file: str) -> bool:
+def generate_formatted_pdf(sections_data: dict, report_data: dict, output_file) -> bool:
     """
     Generate a structured PDF with Assessment → Diagnosis → Prescription sections.
-    
+
     Args:
         sections_data: Dict with keys assessment, diagnosis, prescription
         report_data: Report metadata (patient name, doctor, date, etc.)
-        output_file: Path to output PDF
+        output_file: Path to output PDF, or a writable binary file-like (e.g. BytesIO)
     """
     try:
         doc = SimpleDocTemplate(output_file, pagesize=letter, topMargin=0.75*inch, bottomMargin=0.75*inch)
@@ -294,6 +295,17 @@ def generate_formatted_pdf(sections_data: dict, report_data: dict, output_file: 
     except Exception as e:
         logger.error(f"Error generating structured PDF: {e}", exc_info=True)
         raise
+
+
+def build_report_pdf_bytes(report_id: str) -> bytes | None:
+    """Build a PDF for a report entirely in memory. Returns None if the report does not exist."""
+    report = fetch_report(report_id)
+    if not report:
+        return None
+    sections_data = loop_reports(report_id)
+    buffer = io.BytesIO()
+    generate_formatted_pdf(sections_data, report, buffer)
+    return buffer.getvalue()
 
 
 def send_to_preview_ui(report_id: str, report_data: dict) -> bool:

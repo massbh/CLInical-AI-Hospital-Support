@@ -24,7 +24,6 @@ pip install -r requirements.txt
    ```env
    DATABASE_URL=postgresql://clinicalai:clinicalai@localhost:5432/clinicalai
    SERVICE_PORT=8004
-   API_KEY=your-secret-key
    SCHEDULER_INTERVAL_SECONDS=60  # 60 seconds for development, 3600 for production
    SCHEDULER_ENABLED=true
    ```
@@ -43,13 +42,8 @@ The service will be available at `http://localhost:8004`
 
 ## API Endpoints
 
-All endpoints except `/health` require the `X-API-Key` header:
-```
-X-API-Key: your-secret-key
-```
-
 ### Health Check
-- `GET /health` - Service health status and scheduler state (no auth required)
+- `GET /health` - Service health status and scheduler state
   - **Response:**
     ```json
     {
@@ -61,8 +55,7 @@ X-API-Key: your-secret-key
     ```
 
 ### Report Processing
-- `POST /process-reports` - Manually trigger report processing (requires API key)
-  - **Headers:** `X-API-Key: your-secret-key`
+- `POST /process-reports` - Manually trigger report processing
   - **Response:**
     ```json
     {
@@ -75,8 +68,7 @@ X-API-Key: your-secret-key
     ```
 
 ### Scheduler Status
-- `GET /scheduler/status` - Get scheduler status and next run time (requires API key)
-  - **Headers:** `X-API-Key: your-secret-key`
+- `GET /scheduler/status` - Get scheduler status and next run time
   - **Response:**
     ```json
     {
@@ -114,7 +106,6 @@ X-API-Key: your-secret-key
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `SERVICE_PORT` | `8004` | Port where service runs (avoids conflict with tradLlm:8002) |
-| `API_KEY` | `dev-key` | Secret key for X-API-Key authentication |
 | `DATABASE_URL` | `postgresql://...` | PostgreSQL connection string |
 | `PDF_OUTPUT_DIR` | `reports/` | Directory to store generated PDFs |
 | `PREVIEW_UI_ENDPOINT` | `http://localhost:3000/api/reports` | Frontend preview endpoint base URL |

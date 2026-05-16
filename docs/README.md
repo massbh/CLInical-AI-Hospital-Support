@@ -1,5 +1,8 @@
 # HOW TO
 
+See [testing.md](./testing.md) for how to run the medBrain, tradLlm, and
+webPlatform test suites.
+
 
 ## Batching module
 

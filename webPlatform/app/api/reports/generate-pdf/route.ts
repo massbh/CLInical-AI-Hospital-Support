@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import pool from "@/lib/db";
+import { procedures } from "@/lib/db-procedures";
 
-/**
- * Proxy endpoint to generate a PDF via the reportGenerator service and
- * stream it back to the browser as a download.
- */
 export async function POST(request: NextRequest) {
   try {
     const { reportId } = await request.json();
@@ -16,18 +12,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const previewCheck = await pool.query(
-      "SELECT preview FROM reports WHERE id = $1",
-      [reportId]
-    );
-    if (previewCheck.rows.length === 0) {
+    const exists = await procedures.reportCheckExists(reportId);
+    if (!exists[0].exists) {
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
-    if (previewCheck.rows[0].preview !== false) {
-      return NextResponse.json(
-        { error: "Report must be finalized before download" },
-        { status: 400 }
-      );
+
+    const result = await procedures.reportGetMeta(reportId);
+    if (result.length === 0) {
+      return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
 
     const response = await fetch(

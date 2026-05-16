@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";  
 import bcrypt from "bcrypt";  
-import pool from "@/lib/db"; 
+import { procedures } from "@/lib/db-procedures";
 
-// adds new user into accounts table (and into doctors table if new user is of type doctor)
 export async function POST(request: NextRequest) {
-    // parse JSON body from requests
     const body = await request.json();  
     const { name, email, password, accountType } = body;  
 
-    // validate all required fields are filled
     if (!name || !email || !password || !accountType) {
         return NextResponse.json(
             { error: "Missing one or more required fields: name, email, password, accountType" },
@@ -16,7 +13,6 @@ export async function POST(request: NextRequest) {
         );
     }
 
-    // Basic email format validation. Requires at least: something@something.something  
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;  
     if (!emailRegex.test(email)) {  
         return NextResponse.json(  
@@ -25,7 +21,6 @@ export async function POST(request: NextRequest) {
         );  
     }
 
-    // validate accountType has correct value
     if (accountType !== "doctor" && accountType !== "patient") {
         return NextResponse.json(  
             { error: "accountType must be 'patient' or 'doctor'" },  
@@ -34,34 +29,24 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-        // hash password
         const passwordHash = await bcrypt.hash(password, 10);
 
-        // INSERT into accounts table
-        const accountResult = await pool.query(
-            `INSERT INTO accounts (name, email, password_hash, account_type)
-             VALUES ($1, $2, $3, $4)
-             RETURNING id`,
-             [name, email, passwordHash, accountType]
+        const accountResult = await procedures.authCreateAccount(
+            name, 
+            email, 
+            passwordHash, 
+            accountType as "patient" | "doctor"
         );
 
-        const accountId = accountResult.rows[0].id;
+        const accountId = accountResult[0].id;
 
-        // if user is a doctor, create a new row in doctors table
         if (accountType === "doctor") {
-            await pool.query(
-                `INSERT INTO doctors (name, account_id)
-                 VALUES ($1, $2)`,
-                 [name, accountId]
-            );
+            await procedures.authCreateDoctor(name, accountId);
         }
 
-        // return new account id on success
         return NextResponse.json({ id: accountId }, { status: 201 });
 
     } catch (error: unknown) {
-        // handle duplicate email. postgres throws error code 23505 for unique constraint violations
-        // accounts table has: email VARCHAR(255) NOT NULL UNIQUE  
         if (
             typeof error === "object" &&
             error !== null &&
@@ -74,13 +59,10 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // for any other unexpected error
         console.error("Signup error:", error);  
         return NextResponse.json(  
             { error: "Internal server error" },  
             { status: 500 }  
         ); 
     }
-
-
 }

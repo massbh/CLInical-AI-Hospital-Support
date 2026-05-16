@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import pool from "@/lib/db";
+import { procedures } from "@/lib/db-procedures";
 import { requireDoctor } from "@/lib/db-auth";
 
 export async function GET(request: NextRequest) {
@@ -8,49 +8,29 @@ export async function GET(request: NextRequest) {
     const { user } = authResult;
 
     try {
-        const doctorResult = await pool.query(
-            `SELECT id, name FROM doctors WHERE account_id = $1`,
-            [user.id]
-        );
+        const doctorResult = await procedures.appointmentGetDoctorByAccountId(user.id);
 
-        if (doctorResult.rows.length === 0) {
+        if (doctorResult.length === 0) {
             return NextResponse.json({ error: "No doctor profile found" }, { status: 404 });
         }
 
-        const { id: doctorId, name: doctorName } = doctorResult.rows[0];
+        const { id: doctorId, name: doctorName } = doctorResult[0];
 
-        const appointmentResult = await pool.query(
-            `SELECT ba.id,
-                    ba.patient_id,
-                    ba.date,
-                    ba.time,
-                    a.name AS patient_full_name
-             FROM booked_appointments ba
-             JOIN accounts a ON a.id = ba.patient_id
-             WHERE ba.doctor_id = $1
-               AND ba.date = CURRENT_DATE
-               AND ba.time::TIME >= CURRENT_TIME - INTERVAL '60 minutes'
-             ORDER BY ba.time::TIME
-             LIMIT 1`,
-            [doctorId]
-        );
+        const appointmentResult = await procedures.appointmentGetCurrent(doctorId);
 
-        if (appointmentResult.rows.length === 0) {
+        if (appointmentResult.length === 0) {
             return NextResponse.json({ error: "No appointment found for today" }, { status: 404 });
         }
 
-        const row = appointmentResult.rows[0];
-        const fullName: string = row.patient_full_name ?? "";
-        const [patientName, ...rest] = fullName.split(" ");
-        const patientSurname = rest.join(" ");
+        const row = appointmentResult[0];
 
         return NextResponse.json({
             id: row.id,
             patient_id: row.patient_id,
-            date: row.date,
+            date: row.date instanceof Date ? row.date.toISOString().split('T')[0] : row.date,
             time: row.time,
-            patient_name: patientName,
-            patient_surname: patientSurname,
+            patient_name: row.patient_name,
+            patient_surname: row.patient_surname,
             doctor_name: doctorName,
         });
     } catch (error) {

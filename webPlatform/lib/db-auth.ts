@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "./auth";
-import pool from "./db";
+import { procedures } from "./db-procedures";
 import { cookies } from "next/headers";
 
 export interface AuthUser {
@@ -23,14 +23,11 @@ export async function getAuthUser(
   const payload = await verifyToken(token);
   if (!payload) return null;
 
-  const result = await pool.query(
-    "SELECT id, name, account_type FROM accounts WHERE id = $1",
-    [payload.id]
-  );
+  const result = await procedures.authGetUserById(payload.id);
 
-  if (result.rows.length === 0) return null;
+  if (result.length === 0) return null;
 
-  const row = result.rows[0];
+  const row = result[0];
   return {
     id: row.id,
     name: row.name,
@@ -46,14 +43,11 @@ export async function getAuthUserFromCookies(): Promise<AuthUser | null> {
   const payload = await verifyToken(token);
   if (!payload) return null;
 
-  const result = await pool.query(
-    "SELECT id, name, account_type FROM accounts WHERE id = $1",
-    [payload.id]
-  );
+  const result = await procedures.authGetUserById(payload.id);
 
-  if (result.rows.length === 0) return null;
+  if (result.length === 0) return null;
 
-  const row = result.rows[0];
+  const row = result[0];
   return {
     id: row.id,
     name: row.name,

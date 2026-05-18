@@ -1,6 +1,6 @@
 import { MapPin } from "lucide-react";
 import Image from "next/image";
-import pool from "@/lib/db";
+import { procedures } from "@/lib/db-procedures";
 import { getAuthUserFromCookies } from "@/lib/db-auth";
 
 export default async function DoctorProfileWidget() {
@@ -8,27 +8,23 @@ export default async function DoctorProfileWidget() {
   const doctorName = auth?.name ?? "Doctor";
   const userId = auth?.id;  
 
-  // get doctors working hours
   let workingHoursLabel = "N/A";  
   
   if (userId) {  
-    const result = await pool.query(  
-      `SELECT ds.work_hours  
-       FROM doctors d  
-       JOIN doctor_schedules ds ON ds.doctor_id = d.id  
-       WHERE d.account_id = $1  
-       LIMIT 1`,  
-      [userId]  
-    );  
-  
-    if (result.rows.length > 0) {  
-      const hours: string[] = result.rows[0].work_hours;  
-      if (hours.length > 0) {  
-        const first = hours[0];                // e.g. "9:00 am"  
-        const last = hours[hours.length - 1];  // e.g. "5:00 pm"  
-        workingHoursLabel = `${first} - ${last}`;  
-      }  
-    }  
+    const doctorResult = await procedures.appointmentGetDoctorByAccountId(userId);
+    
+    if (doctorResult.length > 0) {
+      const scheduleResult = await procedures.doctorGetSchedule(doctorResult[0].id);
+      
+      if (scheduleResult.length > 0) {  
+        const hours = scheduleResult[0].work_hours;  
+        if (hours.length > 0) {  
+          const first = hours[0];                
+          const last = hours[hours.length - 1];  
+          workingHoursLabel = `${first} - ${last}`;  
+        }  
+      }
+    }
   }  
 
   return (

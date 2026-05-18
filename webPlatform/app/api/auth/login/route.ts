@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
-import pool from "@/lib/db";
+import { procedures } from "@/lib/db-procedures";
 import { signToken } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
@@ -15,21 +15,16 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-        const result = await pool.query(
-            `SELECT id, name, email, password_hash, account_type
-             FROM accounts
-             WHERE email = $1`,
-             [email]
-        );
+        const result = await procedures.authGetUserByEmail(email);
 
-        if (result.rows.length === 0) {
+        if (result.length === 0) {
             return NextResponse.json(
                 { error: "Invalid email or password" },
                 { status: 401 }
             );
         }
 
-        const account = result.rows[0];
+        const account = result[0];
 
         const passwordMatch = await bcrypt.compare(password, account.password_hash);
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import pool from "@/lib/db";
+import { procedures } from "@/lib/db-procedures";
 import { requireDoctor } from "@/lib/db-auth";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }>}) {
@@ -9,15 +9,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const { id } = await params;
   
   try {  
-    const result = await pool.query(  
-      `SELECT id, title, status  
-       FROM report_sections  
-       WHERE report_id = $1  
-       ORDER BY created_at`,  
-      [id]  
-    );  
-  
-    return NextResponse.json(result.rows);  
+    const result = await procedures.reportSectionGetAll(id);
+    return NextResponse.json(result);  
   } catch (error) {  
     console.error("Error fetching sections:", error);  
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });  

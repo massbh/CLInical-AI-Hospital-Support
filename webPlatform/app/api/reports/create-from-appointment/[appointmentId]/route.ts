@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import pool from "@/lib/db";
+import { procedures } from "@/lib/db-procedures";
 import { structureReportWithTradLlm } from "@/lib/tradllm";
 
 const REPORT_SECTION_TITLES = [
@@ -96,10 +96,6 @@ async function structureReportSections(
   }
 }
 
-/**
- * Create a report from an appointment with initial sections from notes
- * Auto-populates sections from conversation notes
- */
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ appointmentId: string }> }
@@ -119,25 +115,16 @@ export async function POST(
       );
     }
 
-    // booked_appointments.doctor_id references doctors(id), but
-    // reports.doctor_id references accounts(id). Translate via the doctor's
-    // account_id so the FK on reports is satisfied.
-    const appointmentResult = await pool.query(
-      `SELECT ba.patient_id, d.account_id AS doctor_account_id
-       FROM booked_appointments ba
-       JOIN doctors d ON d.id = ba.doctor_id
-       WHERE ba.id = $1`,
-      [appointmentId]
-    );
+    const appointmentResult = await procedures.reportGetAppointmentDetails(appointmentId);
 
-    if (appointmentResult.rows.length === 0) {
+    if (appointmentResult.length === 0) {
       return NextResponse.json(
         { error: "Appointment not found" },
         { status: 404 }
       );
     }
 
-    const { patient_id, doctor_account_id } = appointmentResult.rows[0];
+    const { patient_id, doctor_account_id } = appointmentResult[0];
     if (!doctor_account_id) {
       return NextResponse.json(
         { error: "Doctor has no linked account" },
@@ -145,42 +132,31 @@ export async function POST(
       );
     }
 
-    // Get notes and suggestions from this appointment to use as report inputs.
-    const notesResult = await pool.query(
-      `SELECT id, content FROM notes WHERE appointment_id = $1 ORDER BY timestamp ASC`,
-      [appointmentId]
-    );
-    const suggestionsResult = await pool.query(
-      `SELECT id, description AS content
-       FROM suggestions
-       WHERE appointment_id = $1
-       ORDER BY timestamp ASC`,
-      [appointmentId]
-    );
+    const notesResult = await procedures.reportGetNotesByAppointment(appointmentId);
+    const suggestionsResult = await procedures.reportGetSuggestionsByAppointment(appointmentId);
 
-    const notes = notesResult.rows;
-    const suggestions = suggestionsResult.rows;
-
-    // Create the report
-    const reportResult = await pool.query(
-      `INSERT INTO reports (patient_id, doctor_id, patient_name, patient_surname, doctor_name, date, title, preview)
-       VALUES ($1, $2, $3, $4, $5, CURRENT_DATE, $6, NULL)
-       RETURNING id`,
-      [patient_id, doctor_account_id, patient_name, patient_surname, doctor_name, title || "Medical Consultation Report"]
+    const reportResult = await procedures.reportCreate(
+      patient_id,
+      doctor_account_id,
+      patient_name,
+      patient_surname,
+      doctor_name,
+      title || "Medical Consultation Report"
     );
 
-    const reportId = reportResult.rows[0].id;
+    const reportId = reportResult[0].id;
 
     const sectionSchema = await structureReportSections(
-      notes.map((note) => note.content),
-      suggestions.map((suggestion) => suggestion.content)
+      notesResult.map((note) => note.content),
+      suggestionsResult.map((suggestion) => suggestion.content)
     );
 
     for (const section of sectionSchema) {
-      await pool.query(
-        `INSERT INTO report_sections (report_id, title, content, status)
-         VALUES ($1, $2, $3, $4)`,
-        [reportId, section.title, section.content, "pending"]
+      await procedures.reportSectionUpsert(
+        reportId,
+        section.title,
+        section.content,
+        "pending"
       );
     }
 

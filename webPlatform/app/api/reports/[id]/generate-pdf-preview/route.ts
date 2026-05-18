@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import pool from "@/lib/db";
+import { procedures } from "@/lib/db-procedures";
 
-/**
- * Generate a preview PDF for a report and stream it back inline so the
- * browser can render it in a new tab. Does NOT finalize the report.
- */
 export async function POST(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -12,11 +8,8 @@ export async function POST(
   try {
     const { id: reportId } = await params;
 
-    const reportCheck = await pool.query(
-      "SELECT id FROM reports WHERE id = $1",
-      [reportId]
-    );
-    if (reportCheck.rows.length === 0) {
+    const exists = await procedures.reportCheckExists(reportId);
+    if (!exists[0].exists) {
       return NextResponse.json(
         { error: "Report not found" },
         { status: 404 }

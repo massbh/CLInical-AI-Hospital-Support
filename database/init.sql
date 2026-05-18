@@ -139,10 +139,426 @@ FROM reports r;
 
 
 
-CREATE OR REPLACE FUNCTION get_available_time_slots(
+CREATE OR REPLACE FUNCTION authGetUserByEmail(email TEXT)
+RETURNS TABLE(id UUID, name TEXT, email TEXT, password_hash TEXT, account_type account_type) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT a.id, a.name, a.email, a.password_hash, a.account_type
+    FROM accounts a
+    WHERE a.email = authGetUserByEmail.email;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION authGetUserById(userId UUID)
+RETURNS TABLE(id UUID, name TEXT, account_type account_type) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT a.id, a.name, a.account_type
+    FROM accounts a
+    WHERE a.id = userId;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION authCreateAccount(
+    p_name TEXT,
+    p_email TEXT,
+    p_password_hash TEXT,
+    p_account_type account_type
+)
+RETURNS TABLE(id UUID) AS $$
+BEGIN
+    RETURN QUERY
+    INSERT INTO accounts (name, email, password_hash, account_type)
+    VALUES (p_name, p_email, p_password_hash, p_account_type)
+    RETURNING id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION authCreateDoctor(p_name TEXT, p_account_id UUID)
+RETURNS VOID AS $$
+BEGIN
+    INSERT INTO doctors (name, account_id)
+    VALUES (p_name, p_account_id);
+END;
+$$ LANGUAGE plpgsql;
+
+-- Appointment Procedures
+CREATE OR REPLACE FUNCTION appointmentGetAll(p_doctor_id UUID DEFAULT NULL)
+RETURNS TABLE(doctor_id UUID, date DATE, time VARCHAR(50)) AS $$
+BEGIN
+    IF p_doctor_id IS NOT NULL THEN
+        RETURN QUERY
+        SELECT ba.doctor_id, ba.date, ba.time
+        FROM booked_appointments ba
+        WHERE ba.doctor_id = p_doctor_id
+        ORDER BY ba.date, ba.time;
+    ELSE
+        RETURN QUERY
+        SELECT ba.doctor_id, ba.date, ba.time
+        FROM booked_appointments ba
+        ORDER BY ba.date, ba.time;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION appointmentGetById(p_id UUID)
+RETURNS TABLE(
+    id UUID,
+    date DATE,
+    time VARCHAR(50),
+    patient_id UUID,
+    patient_name TEXT,
+    patient_email TEXT,
+    doctor_name TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        ba.id,
+        ba.date,
+        ba.time,
+        ba.patient_id,
+        a.name AS patient_name,
+        a.email AS patient_email,
+        d.name AS doctor_name
+    FROM booked_appointments ba
+    JOIN accounts a ON a.id = ba.patient_id
+    JOIN doctors d ON d.id = ba.doctor_id
+    WHERE ba.id = p_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION appointmentGetDoctorByAccountId(p_account_id UUID)
+RETURNS TABLE(id UUID, name TEXT) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT d.id, d.name
+    FROM doctors d
+    WHERE d.account_id = p_account_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION appointmentGetCalendarForDoctor(p_doctor_id UUID)
+RETURNS TABLE(id UUID, date DATE, time VARCHAR(50), patient_name TEXT) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT ba.id, ba.date::DATE, ba.time, a.name AS patient_name
+    FROM booked_appointments ba
+    JOIN accounts a ON a.id = ba.patient_id
+    WHERE ba.doctor_id = p_doctor_id
+    ORDER BY ba.date, ba.time DESC;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION appointmentGetCurrent(p_doctor_id UUID)
+RETURNS TABLE(
+    id UUID,
+    patient_id UUID,
+    date DATE,
+    time VARCHAR(50),
+    patient_name TEXT,
+    patient_surname TEXT,
+    doctor_name TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        ba.id,
+        ba.patient_id,
+        ba.date,
+        ba.time,
+        (a.name)::TEXT,
+        SUBSTR(a.name, POSITION(' ' IN a.name) + 1),
+        d.name AS doctor_name
+    FROM booked_appointments ba
+    JOIN accounts a ON a.id = ba.patient_id
+    JOIN doctors d ON d.id = ba.doctor_id
+    WHERE ba.doctor_id = p_doctor_id
+      AND ba.date = CURRENT_DATE
+      AND ba.time::TIME >= CURRENT_TIME - INTERVAL '60 minutes'
+    ORDER BY ba.time::TIME
+    LIMIT 1;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION appointmentBook(
     p_doctor_id UUID,
-    p_date DATE
-) RETURNS TABLE(time_slot VARCHAR(50)) AS $$
+    p_patient_id UUID,
+    p_date DATE,
+    p_time VARCHAR(50)
+)
+RETURNS TABLE(id UUID, doctor_id UUID, date DATE, time VARCHAR(50)) AS $$
+BEGIN
+    RETURN QUERY
+    INSERT INTO booked_appointments (doctor_id, patient_id, date, time)
+    VALUES (p_doctor_id, p_patient_id, p_date, p_time)
+    RETURNING id, doctor_id, date, time;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION appointmentFindAvailable(p_date DATE, p_time VARCHAR(50))
+RETURNS TABLE(id UUID) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT d.id
+    FROM doctors d
+    JOIN doctor_schedules ds ON ds.doctor_id = d.id
+    WHERE
+        EXTRACT(DOW FROM p_date)::INTEGER = ANY(ds.working_days)
+        AND p_time = ANY(ds.work_hours)
+        AND NOT EXISTS (
+            SELECT 1 FROM booked_appointments ba
+            WHERE ba.doctor_id = d.id AND ba.date = p_date AND ba.time = p_time
+        )
+    LIMIT 1;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Doctor Procedures
+CREATE OR REPLACE FUNCTION doctorGetAll()
+RETURNS TABLE(id UUID, name TEXT) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT d.id, d.name FROM doctors d ORDER BY d.name;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION doctorGetSchedule(p_doctor_id UUID)
+RETURNS TABLE(doctor_id UUID, working_days INTEGER[], work_hours TEXT[]) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT ds.doctor_id, ds.working_days, ds.work_hours
+    FROM doctor_schedules ds
+    WHERE ds.doctor_id = p_doctor_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Report Procedures
+CREATE OR REPLACE FUNCTION reportGetAll()
+RETURNS TABLE(
+    id UUID,
+    patient_name TEXT,
+    patient_surname TEXT,
+    date DATE,
+    title TEXT,
+    content TEXT,
+    finalized BOOLEAN
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        r.id,
+        r.patient_name,
+        r.patient_surname,
+        r.date,
+        r.title,
+        r.content,
+        (r.preview IS FALSE)
+    FROM reports r
+    ORDER BY r.date DESC;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION reportGetMeta(p_id UUID)
+RETURNS TABLE(id UUID, patient_id UUID, patient_name TEXT, doctor_name TEXT, date DATE) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT r.id, r.patient_id, r.patient_name, r.doctor_name, r.date
+    FROM report_meta r
+    WHERE r.id = p_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION reportCheckExists(p_id UUID)
+RETURNS TABLE(exists BOOLEAN) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT EXISTS(SELECT 1 FROM reports WHERE id = p_id);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION reportGetAppointmentDetails(p_appointment_id UUID)
+RETURNS TABLE(patient_id UUID, doctor_account_id UUID) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT ba.patient_id, d.account_id AS doctor_account_id
+    FROM booked_appointments ba
+    JOIN doctors d ON d.id = ba.doctor_id
+    WHERE ba.id = p_appointment_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION reportGetNotesByAppointment(p_appointment_id UUID)
+RETURNS TABLE(id UUID, content TEXT) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT n.id, n.content
+    FROM notes n
+    WHERE n.appointment_id = p_appointment_id
+    ORDER BY n.timestamp ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION reportGetSuggestionsByAppointment(p_appointment_id UUID)
+RETURNS TABLE(id UUID, content TEXT) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT s.id, s.description AS content
+    FROM suggestions s
+    WHERE s.appointment_id = p_appointment_id
+    ORDER BY s.timestamp ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION reportCreate(
+    p_patient_id UUID,
+    p_doctor_id UUID,
+    p_patient_name TEXT,
+    p_patient_surname TEXT,
+    p_doctor_name TEXT,
+    p_title TEXT
+)
+RETURNS TABLE(id UUID) AS $$
+BEGIN
+    RETURN QUERY
+    INSERT INTO reports (patient_id, doctor_id, patient_name, patient_surname, doctor_name, date, title, preview)
+    VALUES (p_patient_id, p_doctor_id, p_patient_name, p_patient_surname, p_doctor_name, CURRENT_DATE, p_title, NULL)
+    RETURNING id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION reportSectionUpsert(
+    p_report_id UUID,
+    p_title TEXT,
+    p_content TEXT,
+    p_status section_status
+)
+RETURNS VOID AS $$
+BEGIN
+    INSERT INTO report_sections (report_id, title, content, status)
+    VALUES (p_report_id, p_title, p_content, p_status)
+    ON CONFLICT (report_id, title) DO UPDATE SET
+        content = EXCLUDED.content,
+        status = EXCLUDED.status;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION reportSectionGetAll(p_report_id UUID)
+RETURNS TABLE(id UUID, title TEXT, status section_status) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT rs.id, rs.title, rs.status
+    FROM report_sections rs
+    WHERE rs.report_id = p_report_id
+    ORDER BY rs.created_at;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION reportSectionGetById(p_section_id UUID, p_report_id UUID)
+RETURNS TABLE(id UUID, title TEXT, status section_status, content TEXT) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT rs.id, rs.title, rs.status, rs.content
+    FROM report_sections rs
+    WHERE rs.id = p_section_id AND rs.report_id = p_report_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION reportSectionUpdate(
+    p_section_id UUID,
+    p_report_id UUID,
+    p_status section_status DEFAULT NULL,
+    p_content TEXT DEFAULT NULL
+)
+RETURNS TABLE(id UUID, title TEXT, status section_status) AS $$
+BEGIN
+    RETURN QUERY
+    UPDATE report_sections
+    SET
+        status = COALESCE(p_status, status),
+        content = COALESCE(p_content, content)
+    WHERE id = p_section_id AND report_id = p_report_id
+    RETURNING id, title, status;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION reportFinalize(p_id UUID)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE reports SET preview = FALSE WHERE id = p_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION reportRevertFinalize(p_id UUID)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE reports SET preview = NULL WHERE id = p_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Note Procedures
+CREATE OR REPLACE FUNCTION noteGetByAppointment(p_appointment_id UUID)
+RETURNS TABLE(id UUID, content TEXT, source TEXT, timestamp TIMESTAMP WITH TIME ZONE) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT n.id, n.content, n.source, n.timestamp
+    FROM notes n
+    WHERE n.appointment_id = p_appointment_id
+    ORDER BY n.timestamp::TIME DESC;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION noteCreate(
+    p_content TEXT,
+    p_source TEXT,
+    p_appointment_id UUID
+)
+RETURNS TABLE(id UUID, content TEXT, source TEXT, timestamp TIMESTAMP WITH TIME ZONE) AS $$
+BEGIN
+    RETURN QUERY
+    INSERT INTO notes (content, source, appointment_id)
+    VALUES (p_content, p_source, p_appointment_id)
+    RETURNING id, content, source, timestamp;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Suggestion Procedures
+CREATE OR REPLACE FUNCTION suggestionGetByAppointment(p_appointment_id UUID)
+RETURNS TABLE(
+    id UUID,
+    content TEXT,
+    priority TEXT,
+    title TEXT,
+    source TEXT,
+    timestamp TIMESTAMP WITH TIME ZONE
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT s.id, s.description AS content, s.priority::TEXT, s.title, NULL::TEXT AS source, s.timestamp
+    FROM suggestions s
+    WHERE s.appointment_id = p_appointment_id
+    ORDER BY s.timestamp::TIME DESC;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION suggestionCreate(
+    p_title TEXT,
+    p_description TEXT,
+    p_priority TEXT,
+    p_appointment_id UUID
+)
+RETURNS TABLE(id UUID, content TEXT, priority TEXT, title TEXT, timestamp TIMESTAMP WITH TIME ZONE) AS $$
+BEGIN
+    RETURN QUERY
+    INSERT INTO suggestions (title, description, priority, appointment_id)
+    VALUES (p_title, p_description, p_priority::suggestion_priority, p_appointment_id)
+    RETURNING id, description AS content, priority::TEXT, title, timestamp;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Time Slots Procedure
+CREATE OR REPLACE FUNCTION getAvailableTimeSlots(p_doctor_id UUID, p_date DATE)
+RETURNS TABLE(time_slot VARCHAR(50)) AS $$
 BEGIN
     RETURN QUERY
     SELECT unnest(ds.work_hours)::VARCHAR(50)

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import pool from "@/lib/db";
+import { procedures } from "@/lib/db-procedures";
 
 const EMAIL_SERVICE_URL =
   process.env.EMAIL_SERVICE_URL ?? "http://localhost:8003";
@@ -48,10 +48,6 @@ async function sendFinalizedReportEmail(reportId: string): Promise<EmailResult> 
   }
 }
 
-/**
- * Finalize a report and stream the generated PDF back as an attachment.
- * All sections must be accepted before this can succeed.
- */
 export async function POST(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -59,11 +55,8 @@ export async function POST(
   try {
     const { id: reportId } = await params;
 
-    const sectionsResult = await pool.query(
-      "SELECT id, status FROM report_sections WHERE report_id = $1",
-      [reportId]
-    );
-    const sections = sectionsResult.rows;
+    const sectionsResult = await procedures.reportSectionGetAll(reportId);
+    const sections = sectionsResult;
     if (sections.length === 0) {
       return NextResponse.json(
         { error: "No sections found for this report" },
@@ -72,7 +65,7 @@ export async function POST(
     }
 
     const pendingSections = sections.filter(
-      (s: { status: string }) => s.status === "pending"
+      (s) => s.status === "pending"
     );
     if (pendingSections.length > 0) {
       return NextResponse.json(
@@ -84,10 +77,7 @@ export async function POST(
       );
     }
 
-    await pool.query(
-      "UPDATE reports SET preview = $1 WHERE id = $2",
-      [false, reportId]
-    );
+    await procedures.reportFinalize(reportId);
 
     const response = await fetch(
       `http://localhost:8004/generate-pdf/${reportId}`,
@@ -96,10 +86,7 @@ export async function POST(
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
-      await pool.query(
-        "UPDATE reports SET preview = NULL WHERE id = $1",
-        [reportId]
-      );
+      await procedures.reportRevertFinalize(reportId);
       return NextResponse.json(
         { error: data.detail || "Failed to generate final PDF" },
         { status: response.status }
